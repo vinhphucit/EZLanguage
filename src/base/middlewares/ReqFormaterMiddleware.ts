@@ -8,8 +8,8 @@ export class ReqFormaterMiddleware {
         
         const {method, url, body, originalUrl} = request;
         if (!BLACKLIST_LOG.includes(url)) {
-            Logger.info("--> Method:" + method + ", URl:" + originalUrl);
-            Logger.info("--> Body:" + JSON.stringify(body));
+            Logger.info("--> Method:" + method + " --> " + originalUrl);
+            Logger.info("--> Body: " + JSON.stringify(body));
         }
         next()
     }

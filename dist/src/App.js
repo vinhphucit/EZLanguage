@@ -36,6 +36,9 @@ const Logger_1 = require("./base/utils/Logger");
 const Banner_1 = require("./base/utils/Banner");
 const ResFormaterMiddleware_1 = require("./base/middlewares/ResFormaterMiddleware");
 const ReqFormaterMiddleware_1 = require("./base/middlewares/ReqFormaterMiddleware");
+const SwaggerRouter_1 = require("./base/routers/SwaggerRouter");
+const HealthCheckRouter_1 = require("./base/routers/HealthCheckRouter");
+const NotFountRouter_1 = require("./base/routers/NotFountRouter");
 class App {
     // const debugLog: debug.IDebugger = debug('app');
     constructor() {
@@ -54,6 +57,7 @@ class App {
             this.routes.forEach((route) => {
                 Logger_1.Logger.info(`Routes configured for ${route.getName()}`);
             });
+            Logger_1.Logger.info(this.app._router.stack);
             (0, Banner_1.banner)(Env_1.env.app.name);
         });
     }
@@ -67,7 +71,7 @@ class App {
     }
     initializeRouters() {
         Logger_1.Logger.info(`initializeRouters`);
-        this.routes.push(new UserRouter_1.UserRouter(this.app));
+        this.routes.push(new SwaggerRouter_1.SwaggerRouter(this.app), new HealthCheckRouter_1.HealthCheckRouter(this.app), new UserRouter_1.UserRouter(this.app), new NotFountRouter_1.NotFountRounter(this.app));
     }
     initializeHandlingRequest() {
         Logger_1.Logger.info(`initializeHandlingRequest`);

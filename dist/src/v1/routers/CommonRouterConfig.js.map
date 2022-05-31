@@ -1,1 +1,0 @@
-{"version":3,"file":"CommonRouterConfig.js","sourceRoot":"","sources":["../../../../src/v1/routers/CommonRouterConfig.ts"],"names":[],"mappings":";;;AACA,MAAsB,kBAAkB;IAIpC,YAAY,GAAwB,EAAE,IAAY;QAC9C,IAAI,CAAC,GAAG,GAAG,GAAG,CAAC;QACf,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,eAAe,EAAE,CAAC;IAC3B,CAAC;IACD,OAAO;QACH,OAAO,IAAI,CAAC,IAAI,CAAC;IACrB,CAAC;CAIJ;AAfD,gDAeC"}
