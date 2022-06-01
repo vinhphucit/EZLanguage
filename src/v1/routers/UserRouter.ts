@@ -1,5 +1,7 @@
-import { CommonRoutesConfig } from "../../base/routers/CommonRouterConfig";
+import { CommonRoutesConfig } from "./CommonRouterConfig";
 import express from "express";
+import { UserController as UserController } from "../controllers/UserController";
+import Container from "typedi";
 
 export class UserRouter extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -7,9 +9,7 @@ export class UserRouter extends CommonRoutesConfig {
   }
 
   configureRoutes() {
-    this.router.get(``, (req: express.Request, res: express.Response) => {
-      res.status(200).send(`List of users`);
-    });
+    const controller = Container.get(UserController);    
 
     this.router.all(
       ``,
@@ -24,17 +24,10 @@ export class UserRouter extends CommonRoutesConfig {
         next();
       }
     );
-    this.router.get(``, (req: express.Request, res: express.Response) => {
-      res.status(200).send(`GET requested for id ${req.params.userId}`);
-    });
-    this.router.put(``, (req: express.Request, res: express.Response) => {
-      res.status(200).send(`PUT requested for id ${req.params.userId}`);
-    });
-    this.router.patch(``, (req: express.Request, res: express.Response) => {
-      res.status(200).send(`PATCH requested for id ${req.params.userId}`);
-    });
-    this.router.delete(``, (req: express.Request, res: express.Response) => {
-      res.status(200).send(`DELETE requested for id ${req.params.userId}`);
-    });
+    this.router.post(``, controller.create.bind(controller));
+    this.router.get(``, controller.get.bind(controller));    
+    this.router.get(`:id`, controller.getById.bind(controller));    
+    this.router.put(`:id`, controller.updateById.bind(controller));    
+    this.router.delete(`:id`, controller.deleteById.bind(controller));    
   }
 }

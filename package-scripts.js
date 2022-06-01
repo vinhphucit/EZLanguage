@@ -130,7 +130,7 @@ module.exports = {
             },
             openapi_json: {
                 script: copyDir(
-                    '../openapi.json',
+                    '../openapi_v1.json',
                     './dist'
                 ),
                 hiddenFromHelp: true
