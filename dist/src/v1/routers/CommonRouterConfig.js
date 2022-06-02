@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonRoutesConfig = void 0;
 const express_1 = require("express");
 const Env_1 = require("../../Env");
+const StringUtils_1 = require("../utils/StringUtils");
 class CommonRoutesConfig {
     constructor(app, name, path = null) {
         this.router = (0, express_1.Router)();
@@ -12,8 +13,7 @@ class CommonRoutesConfig {
             path = name;
         }
         this.configureRoutes();
-        // this.app.use(`${VERSION}/${env.app.rootPath}/${name}/`, this.router);
-        this.app.use(`/${Env_1.env.app.rootPath}/${path}`, this.router);
+        this.app.use(`${(0, StringUtils_1.standardizePath)(Env_1.env.app.rootPath)}/${path}`, this.router);
     }
     getName() {
         return this.name;

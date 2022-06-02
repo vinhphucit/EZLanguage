@@ -17,7 +17,6 @@ export class RoleService {
     }
 
     public async create(role: CreateRoleRequest): Promise<IRole>{
-        console.log(JSON.stringify(role))
         const existingRole = await this.getByCode(role.code);
         if(existingRole){
             throw new BadRequestException(`Code ${role.code} already existed`)
@@ -27,7 +26,6 @@ export class RoleService {
             name: role.name,
             code: role.code            
         }
-        console.log(JSON.stringify(item))
         return this.repo.create(item);
     }
 

@@ -27,15 +27,15 @@ class QueryParsingUtils {
     }
     static parseSort(pRawSort) {
         if (pRawSort) {
-            let rawSort = '';
+            let rawSort = "";
             let sortingMap = new Map();
             if (Array.isArray(pRawSort)) {
-                rawSort = pRawSort.join(',');
+                rawSort = pRawSort.join(",");
             }
             else {
                 rawSort = pRawSort;
             }
-            let sortItems = rawSort.split(',');
+            let sortItems = rawSort.split(",");
             for (let sortItem of sortItems) {
                 let order;
                 if (sortItem.charAt(0) === "+") {
@@ -47,7 +47,7 @@ class QueryParsingUtils {
                 else {
                     continue;
                 }
-                sortingMap.set(sortItem.substring(1), order);
+                sortingMap.set(this.standardizefield(sortItem.substring(1)), order);
             }
             return Array.from(sortingMap);
         }
@@ -59,7 +59,7 @@ class QueryParsingUtils {
         }
         let queryString = "";
         if (Array.isArray(pQueryString)) {
-            queryString = pQueryString.join(',');
+            queryString = pQueryString.join(",");
         }
         else {
             queryString = pQueryString;
@@ -81,6 +81,7 @@ class QueryParsingUtils {
                 if (iQueryField.length <= 0) {
                     continue;
                 }
+                iQueryField = this.standardizefield(iQueryField);
                 if (allowFields) {
                     if (allowFields.includes(iQueryField)) {
                         Logger_1.Logger.info(`Field ${iQueryField} is not allow in query`);
@@ -95,70 +96,76 @@ class QueryParsingUtils {
                 //actual comparations
                 let iQueryValue = iQueryParts[2];
                 //only accept string or number
-                if ((typeof iQueryValue !== 'string') && (typeof iQueryValue !== 'number')) {
+                if (typeof iQueryValue !== "string" &&
+                    typeof iQueryValue !== "number") {
                     continue;
                 }
-                if (iQueryOperator === 'like') {
-                    let iRegex = new RegExp(iQueryValue, 'i');
+                if (iQueryOperator === "like") {
+                    let iRegex = new RegExp(iQueryValue, "i");
                     mongoQuery[iQueryField] = {
-                        "$regex": iRegex
+                        $regex: iRegex,
                     };
                 }
-                else if (iQueryOperator === 'in') {
-                    let iInItems = iQueryValue.split('|');
+                else if (iQueryOperator === "in") {
+                    let iInItems = iQueryValue.split("|");
                     mongoQuery[iQueryField] = {
-                        "$in": iInItems
+                        $in: iInItems,
                     };
                 }
-                else if (iQueryOperator === 'nin') {
-                    let iInItems = iQueryValue.split('|');
+                else if (iQueryOperator === "nin") {
+                    let iInItems = iQueryValue.split("|");
                     mongoQuery[iQueryField] = {
-                        "$nin": iInItems
+                        $nin: iInItems,
                     };
                 }
-                else if (iQueryOperator === 'gt') {
+                else if (iQueryOperator === "gt") {
                     mongoQuery[iQueryField] = {
-                        "$gt": iQueryValue
+                        $gt: iQueryValue,
                     };
                 }
-                else if (iQueryOperator === 'gte') {
+                else if (iQueryOperator === "gte") {
                     mongoQuery[iQueryField] = {
-                        "$gte": iQueryValue
+                        $gte: iQueryValue,
                     };
                 }
-                else if (iQueryOperator === 'lt') {
+                else if (iQueryOperator === "lt") {
                     mongoQuery[iQueryField] = {
-                        "$lt": iQueryValue
+                        $lt: iQueryValue,
                     };
                 }
-                else if (iQueryOperator === 'lte') {
+                else if (iQueryOperator === "lte") {
                     mongoQuery[iQueryField] = {
-                        "$lte": iQueryValue
+                        $lte: iQueryValue,
                     };
                 }
-                else if (iQueryOperator === 'ne') {
+                else if (iQueryOperator === "ne") {
                     mongoQuery[iQueryField] = {
-                        "$ne": iQueryValue
+                        $ne: iQueryValue,
                     };
                 }
-                else if (iQueryOperator === 'eq') {
+                else if (iQueryOperator === "eq") {
                     mongoQuery[iQueryField] = iQueryValue;
                 }
-                else if (iQueryOperator === 'gtd' || iQueryOperator === 'gted' || iQueryOperator === 'ltd' || iQueryOperator === 'lted') {
+                else if (iQueryOperator === "gtd" ||
+                    iQueryOperator === "gted" ||
+                    iQueryOperator === "ltd" ||
+                    iQueryOperator === "lted") {
                     let iQueryValueMoment = (0, moment_1.default)(iQueryValue, StringUtils_1.DATETIME_FORMAT_NO_TZ);
-                    let iQueryValueDate = (iQueryValueMoment) ? iQueryValueMoment.toDate() : null;
+                    let iQueryValueDate = iQueryValueMoment
+                        ? iQueryValueMoment.toDate()
+                        : null;
                     if (iQueryValueDate) {
                         let iOperator = null;
-                        if (iQueryOperator === 'gtd') {
+                        if (iQueryOperator === "gtd") {
                             iOperator = "$gt";
                         }
-                        else if (iQueryOperator === 'gted') {
+                        else if (iQueryOperator === "gted") {
                             iOperator = "$gte";
                         }
-                        else if (iQueryOperator === 'ltd') {
+                        else if (iQueryOperator === "ltd") {
                             iOperator = "$lt";
                         }
-                        else if (iQueryOperator === 'lted') {
+                        else if (iQueryOperator === "lted") {
                             iOperator = "$lte";
                         }
                         if (!mongoQuery[iQueryField]) {
@@ -189,6 +196,12 @@ class QueryParsingUtils {
             nQuery.push(extra);
         }
         return nQuery;
+    }
+    static standardizefield(field) {
+        if (field === `id`) {
+            return `_id`;
+        }
+        return field;
     }
 }
 exports.QueryParsingUtils = QueryParsingUtils;

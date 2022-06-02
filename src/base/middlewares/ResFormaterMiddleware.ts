@@ -4,7 +4,7 @@ import {HttpException} from '../exceptions/HttpException';
 import {InternalServerException} from "../exceptions/InternalServerException";
 import {NoContentResponse} from "../models/dto/response/success/NoContentResponse";
 import {SuccessResponse} from "../models/dto/response/success/SuccessResponse";
-import {BLACKLIST_LOG} from "../utils/Constants";
+import {BLACKLIST_LOG, SWAGGER_PATH} from "../utils/Constants";
 import {Logger} from "../utils/Logger";
 
 export class ResFormaterMiddleware {
@@ -20,8 +20,9 @@ export class ResFormaterMiddleware {
             const code = exception.statusCode || 500;
             const error = exception.error;
             const description = exception.description || exception.code;
-            if (!BLACKLIST_LOG.includes(request.url)) {
-                Logger.info(`<-- ${code} Method: ${request.method}, URL: ${request.originalUrl}, Data : ${JSON.stringify({
+            if (!BLACKLIST_LOG.includes(request.originalUrl) && !request.originalUrl.startsWith(SWAGGER_PATH)) {
+                Logger.info(`<-- ${code} Method: ${request.method}, URL: ${request.originalUrl}`)
+                Logger.info(` Data : ${JSON.stringify({
                     code,
                     error,
                     description
@@ -37,8 +38,9 @@ export class ResFormaterMiddleware {
 
         } else {
             if (data instanceof SuccessResponse) {
-                if (!BLACKLIST_LOG.includes(request.originalUrl)) {
-                    Logger.info(`<-- ${data.statusCode} Method: ${request.method}, URL: ${request.originalUrl} \nData: ${data?.data ? JSON.stringify(data.data) : "No Data"}`)
+                if (!BLACKLIST_LOG.includes(request.originalUrl) && !request.originalUrl.startsWith(SWAGGER_PATH)) {
+                    Logger.info(`<-- ${data.statusCode} Method: ${request.method}, URL: ${request.originalUrl}`)                    
+                    Logger.info(`Data: ${data?.data ? JSON.stringify(data.data) : "No Data"}`)
                 }
                 return response.status(data.statusCode).send(data.data);
 

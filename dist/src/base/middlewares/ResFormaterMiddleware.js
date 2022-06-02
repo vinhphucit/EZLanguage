@@ -19,8 +19,9 @@ class ResFormaterMiddleware {
             const code = exception.statusCode || 500;
             const error = exception.error;
             const description = exception.description || exception.code;
-            if (!Constants_1.BLACKLIST_LOG.includes(request.url)) {
-                Logger_1.Logger.info(`<-- ${code} Method: ${request.method}, URL: ${request.originalUrl}, Data : ${JSON.stringify({
+            if (!Constants_1.BLACKLIST_LOG.includes(request.originalUrl) && !request.originalUrl.startsWith(Constants_1.SWAGGER_PATH)) {
+                Logger_1.Logger.info(`<-- ${code} Method: ${request.method}, URL: ${request.originalUrl}`);
+                Logger_1.Logger.info(` Data : ${JSON.stringify({
                     code,
                     error,
                     description
@@ -36,8 +37,9 @@ class ResFormaterMiddleware {
         }
         else {
             if (data instanceof SuccessResponse_1.SuccessResponse) {
-                if (!Constants_1.BLACKLIST_LOG.includes(request.originalUrl)) {
-                    Logger_1.Logger.info(`<-- ${data.statusCode} Method: ${request.method}, URL: ${request.originalUrl} \nData: ${(data === null || data === void 0 ? void 0 : data.data) ? JSON.stringify(data.data) : "No Data"}`);
+                if (!Constants_1.BLACKLIST_LOG.includes(request.originalUrl) && !request.originalUrl.startsWith(Constants_1.SWAGGER_PATH)) {
+                    Logger_1.Logger.info(`<-- ${data.statusCode} Method: ${request.method}, URL: ${request.originalUrl}`);
+                    Logger_1.Logger.info(`Data: ${(data === null || data === void 0 ? void 0 : data.data) ? JSON.stringify(data.data) : "No Data"}`);
                 }
                 return response.status(data.statusCode).send(data.data);
             }

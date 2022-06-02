@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import { VERSION } from '../../base/utils/Constants';
 import { env } from '../../Env';
+import { standardizePath } from '../utils/StringUtils';
 export abstract class CommonRoutesConfig {
     app: express.Application;
     router: Router = Router();
@@ -12,9 +13,9 @@ export abstract class CommonRoutesConfig {
         if(path == null){
             path = name;
         }
-        this.configureRoutes();
-        // this.app.use(`${VERSION}/${env.app.rootPath}/${name}/`, this.router);
-        this.app.use(`/${env.app.rootPath}/${path}`, this.router);
+        
+        this.configureRoutes();        
+        this.app.use(`${standardizePath(env.app.rootPath)}/${path}`, this.router);
     }
     getName() {
         return this.name;

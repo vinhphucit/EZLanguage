@@ -30,7 +30,6 @@ let RoleService = class RoleService {
     }
     create(role) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(JSON.stringify(role));
             const existingRole = yield this.getByCode(role.code);
             if (existingRole) {
                 throw new BadRequestException_1.BadRequestException(`Code ${role.code} already existed`);
@@ -39,7 +38,6 @@ let RoleService = class RoleService {
                 name: role.name,
                 code: role.code
             };
-            console.log(JSON.stringify(item));
             return this.repo.create(item);
         });
     }

@@ -11,7 +11,6 @@ export const corsWhitelist = (whitelist?: string[] | string) => {
     }
     const corsOptionsDelegate = function (req: Request, callback: (err: Error | null, options?: cors.CorsOptions) => void) {
         let corsOptions: cors.CorsOptions;
-        Logger.info('header' + JSON.stringify(req.headers));
         if (whitelist.indexOf(req.header('Origin')) !== -1
         || whitelist.includes('*')) {
             corsOptions = {origin: true};
