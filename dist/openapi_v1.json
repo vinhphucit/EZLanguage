@@ -12,6 +12,9 @@
     "servers": [
         {
             "url": "http://localhost:3000/ezlang/"
+        },
+        {
+            "url": "https://ez-lang-alpha.herokuapp.com/ezlang/"
         }
     ],
     "tags": [
