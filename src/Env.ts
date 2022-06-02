@@ -15,8 +15,8 @@ export const env = {
     app: {
         name: 'EZ Language',
         version: (pkg as any).version,
-        host: getOsEnv('SERVER_HOST'),
-        port: getOsEnv('SERVER_PORT'),
+        host: getOsEnv('HOST'),
+        port: getOsEnv('PORT'),
         env: getOsEnv('ENV'),
         rootPath: getOsEnv('ROOT_PATH'),
     },

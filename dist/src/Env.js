@@ -41,8 +41,8 @@ exports.env = {
     app: {
         name: 'EZ Language',
         version: pkg.version,
-        host: (0, env_1.getOsEnv)('SERVER_HOST'),
-        port: (0, env_1.getOsEnv)('SERVER_PORT'),
+        host: (0, env_1.getOsEnv)('HOST'),
+        port: (0, env_1.getOsEnv)('PORT'),
         env: (0, env_1.getOsEnv)('ENV'),
         rootPath: (0, env_1.getOsEnv)('ROOT_PATH'),
     },
