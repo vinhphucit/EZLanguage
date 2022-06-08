@@ -36,6 +36,7 @@ export class AuthService {
       timestamp_accesstoken_expiry
     );
 
+    await JwtUtils.verifyJwtToken(newAuth.accessToken)
 
     newAuth.accessTokenExpiresAt = timestamp_accesstoken_expiry;
     //Create the refresh token

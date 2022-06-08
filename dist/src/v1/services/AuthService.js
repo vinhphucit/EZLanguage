@@ -39,6 +39,7 @@ let AuthService = class AuthService {
             let newAuth = new SignInResponse_1.SignInResponse();
             const timestamp_accesstoken_expiry = Math.floor(Date.now() / 1000) + Env_1.env.auth.accessTokenExpiresIn * 60;
             newAuth.accessToken = JwtUtils_1.JwtUtils.createAccess(found_user, timestamp_accesstoken_expiry);
+            yield JwtUtils_1.JwtUtils.verifyJwtToken(newAuth.accessToken);
             newAuth.accessTokenExpiresAt = timestamp_accesstoken_expiry;
             //Create the refresh token
             const timestamp_refresh_expiry = Math.floor(Date.now() / 1000) + Env_1.env.auth.refreshTokenExpiresIn * 60;
