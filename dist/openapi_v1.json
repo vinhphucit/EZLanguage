@@ -1123,7 +1123,7 @@
                     "roles": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/UserRoleRequest"
+                            "$ref": "#/components/schemas/IdOnly"
                         }
                     }
                 }
@@ -1145,6 +1145,12 @@
                     },
                     "mobile": {
                         "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IdOnly"
+                        }
                     }
                 }
             },
@@ -1272,6 +1278,17 @@
                         "items": {
                             "$ref": "object"
                         }
+                    }
+                }
+            },
+            "IdOnly": {
+                "type": "object",
+                "required": [
+                    "rootCause"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
                     }
                 }
             },

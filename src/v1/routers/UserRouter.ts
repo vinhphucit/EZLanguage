@@ -12,25 +12,33 @@ export class UserRouter extends CommonRoutesConfig {
   }
 
   configureRoutes() {
-    const controller = Container.get(UserController);    
+    const controller = Container.get(UserController);
 
-    this.router.all(
+    this.router.all(``, AuthenticationMiddleware());
+    this.router.post(
       ``,
-      (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        // this middleware function runs before any request to /users/:userId
-        // but it doesn't accomplish anything just yet---
-        // it simply passes control to the next applicable function below using next()
-        next();
-      }
+      AuthorizationMiddleware(Permissions.User.Create),
+      controller.create.bind(controller)
     );
-    this.router.post(``,AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.Create), controller.create.bind(controller));
-    this.router.get(``, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.Read),controller.get.bind(controller));    
-    this.router.get(`/:id`, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.ReadById),controller.getById.bind(controller));    
-    this.router.put(`/:id`, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.UpdateById), controller.updateById.bind(controller));    
-    this.router.delete(`/:id`,  AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.DeleteById), controller.deleteById.bind(controller));    
+    this.router.get(
+      ``,      
+      AuthorizationMiddleware(Permissions.User.Read),
+      controller.get.bind(controller)
+    );
+    this.router.get(
+      `/:id`,      
+      AuthorizationMiddleware(Permissions.User.ReadById),
+      controller.getById.bind(controller)
+    );
+    this.router.put(
+      `/:id`,    
+      AuthorizationMiddleware(Permissions.User.UpdateById),
+      controller.updateById.bind(controller)
+    );
+    this.router.delete(
+      `/:id`,      
+      AuthorizationMiddleware(Permissions.User.DeleteById),
+      controller.deleteById.bind(controller)
+    );
   }
 }

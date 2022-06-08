@@ -69,7 +69,11 @@ class JwtUtils {
         if (!expiry_timestamp) {
             expiry_timestamp = Math.floor(Date.now() / 1000) + 10 * 36000;
         }
-        return jsonwebtoken.sign(Object.assign(Object.assign({}, jwtPayload), { exp: expiry_timestamp }), this.privateKey);
+        let signOptions = {
+            algorithm: "RS256",
+        };
+        const accessToken = jsonwebtoken.sign(Object.assign(Object.assign({}, jwtPayload), { exp: expiry_timestamp }), this.privateKey, signOptions);
+        return accessToken;
     }
     /**
      * Creates a new password reset token for a given user.
@@ -77,10 +81,11 @@ class JwtUtils {
      * @param user User entity that the password reset token shall be created for
      */
     static createReset(user) {
-        let expiry_timestamp = Math.floor(Date.now() / 1000) + Env_1.env.auth.forgetPasswordTokenExpiresIn * 60 * 60;
+        let expiry_timestamp = Math.floor(Date.now() / 1000) +
+            Env_1.env.auth.forgetPasswordTokenExpiresIn * 60 * 60;
         return jsonwebtoken.sign({
             id: user.id,
-            exp: expiry_timestamp
+            exp: expiry_timestamp,
         }, this.privateKey);
     }
     /**
@@ -99,15 +104,18 @@ class JwtUtils {
     // }
     static verifyJwtToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => jsonwebtoken.verify(token, JwtUtils.privateKey, (err, data) => {
-                if (err) {
-                    return reject(err);
-                }
-                return resolve(data);
-            }));
+            return new Promise((resolve, reject) => {
+                jsonwebtoken.verify(token, JwtUtils.publicKey, { algorithms: ["RS256"] }, (err, data) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(data);
+                });
+            });
         });
     }
 }
 exports.JwtUtils = JwtUtils;
-JwtUtils.privateKey = fs_1.default.readFileSync(path_1.default.resolve(__dirname, '../../../../assets/private.key'), 'utf8');
+JwtUtils.privateKey = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../../../../assets/private.key"), "utf8");
+JwtUtils.publicKey = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../../../../assets/public.key"), "utf8");
 //# sourceMappingURL=JwtUtils.js.map

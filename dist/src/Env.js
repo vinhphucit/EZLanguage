@@ -39,7 +39,7 @@ if (!process.env.ENV || process.env.ENV === 'test') {
 }
 exports.env = {
     app: {
-        name: 'EZ Language',
+        name: 'EZ-Lang-Auth',
         version: pkg.version,
         host: (0, env_1.getOsEnv)('HOST'),
         port: (0, env_1.getOsEnv)('PORT'),

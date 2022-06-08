@@ -57,7 +57,7 @@ export class JwtPayload {
         for (let group of user.roles) {
             if (group.permissions) {
                 for (let permission of group.permissions) {
-                    returnPermissions.push(permission.toString());
+                    returnPermissions.push(permission.code);
                 }
             }
         }

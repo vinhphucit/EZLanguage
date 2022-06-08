@@ -35,6 +35,8 @@ export class AuthService {
       found_user,
       timestamp_accesstoken_expiry
     );
+
+
     newAuth.accessTokenExpiresAt = timestamp_accesstoken_expiry;
     //Create the refresh token
     const timestamp_refresh_expiry =
