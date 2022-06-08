@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "EZLanguage",
+    "title": "EZ-Lang-Auth",
     "version": "1.0.0",
     "description": "REST API designed to provide functions for ez language",
     "contact": {
@@ -23,13 +23,22 @@
       "description": "System APIs"
     },
     {
+      "name": "Auth",
+      "description": "Auth APIs"
+    },
+    {
       "name": "User",
       "description": "User APIs"
     },
     {
       "name": "Role",
       "description": "Role APIs"
+    },
+    {
+      "name": "Permission",
+      "description": "Permission APIs"
     }
+
   ],
   "paths": {
     "/health/check": {
@@ -64,6 +73,234 @@
             "description": "Server error"
           }
         }
+      }
+    },
+    "/auth/signIn": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "SignIn",
+        "operationId": "singIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/auth/refreshToken": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "RefreshToken",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/auth/signUp":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "SignUp",
+        "operationId": "signUp",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/verifyEmail":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "verifyEmail",
+        "operationId": "verifyEmail",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Operation"            
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/resetPassword":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "resetPassword",
+        "operationId": "resetPassword",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Operation"            
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/confirmResetPassword":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "confirmResetPassword",
+        "operationId": "confirmResetPassword",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Operation"            
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/changePassword":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "changePassword",
+        "operationId": "changePassword",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Operation"            
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/users":{
@@ -161,7 +398,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       }
@@ -200,7 +437,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       },
@@ -246,7 +483,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       },
@@ -276,7 +513,222 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/permissions":{
+      "get": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Get Permissions",
+        "operationId": "getPermissions",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "maximum 100",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPermissionsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Create Permission",
+        "operationId": "createPermission",      
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePermissionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/permissions/{id}":{
+      "get": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Get Permission By Id",
+        "operationId": "getPermissionById",
+        "parameters": [          
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Update Permission By Id",
+        "operationId": "updatePermissionById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePermissionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Delete Permission",
+        "operationId": "deletePermissionById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Operation"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
           }
         ]
       }
@@ -376,7 +828,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       }
@@ -415,7 +867,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       },
@@ -461,7 +913,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       },
@@ -491,7 +943,7 @@
         },
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ]
       }
@@ -528,10 +980,41 @@
           }
         }
       },
-      "CreateUserRequest": {
+      "SignInRequest": {
         "type": "object",
         "properties": {
           "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "SignInResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "accessTokenExpiresAt": {
+            "type": "number"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "refreshTokenExpiresAt": {
+            "type": "number"
+          }
+        }
+      },
+      "SignUpRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
             "type": "string"
           },
           "firstName": {
@@ -548,6 +1031,101 @@
           },
           "mobile": {
             "type": "string"
+          }
+        }
+      },
+      "VerifyEmailRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "ConfirmResetPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangePasswordRequest":{
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "oldPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "UserRoleRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "roles": {            
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRoleRequest"
+            }            
           }
         }
       },
@@ -588,7 +1166,7 @@
           }
         ]
       },
-      "CreateRoleRequest": {
+      "CreatePermissionRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -599,7 +1177,7 @@
           }
         }
       },
-      "UpdateRoleRequest": {
+      "UpdatePermissionRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -607,6 +1185,51 @@
           },
           "code": {
             "type": "string"
+          }
+        }
+      },
+      "GetPermissionsResponse": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseListResponse",
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CreateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items":{
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UpdateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items":{
+              "type": "string"
+            }
           }
         }
       },
@@ -659,9 +1282,6 @@
           "id": {
             "type": "string"
           },
-          "userName": {
-            "type": "string"
-          },
           "firstName": {
             "type": "string"
           },
@@ -678,6 +1298,29 @@
             "type": "string"
           },
           "mobile": {
+            "type": "string"
+          },
+          "status":{
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "Permission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
             "type": "string"
           },
           "createdAt": {
@@ -697,8 +1340,11 @@
           "name": {
             "type": "string"
           },
-          "code": {
-            "type": "string"
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
           },
           "createdAt": {
             "type": "string"
@@ -714,11 +1360,6 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      },
-      "apiKeyAuth": {
-        "type": "apiKey",
-        "name": "apikey",
-        "in": "header"
       }
     }
   }

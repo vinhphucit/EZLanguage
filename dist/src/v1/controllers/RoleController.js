@@ -22,11 +22,11 @@ exports.RoleController = void 0;
 const typedi_1 = require("typedi");
 const SuccessResponse_1 = require("../../base/models/dto/response/success/SuccessResponse");
 const RoleService_1 = require("../services/RoleService");
-const CreateRoleResponse_1 = require("../models/dto/response/CreateRoleResponse");
-const GetRolesResponse_1 = require("../models/dto/response/GetRolesResponse");
-const GetRoleByIdResponse_1 = require("../models/dto/response/GetRoleByIdResponse");
+const CreateRoleResponse_1 = require("../models/dto/response/role/CreateRoleResponse");
+const GetRolesResponse_1 = require("../models/dto/response/role/GetRolesResponse");
+const GetRoleByIdResponse_1 = require("../models/dto/response/role/GetRoleByIdResponse");
 const NoContentResponse_1 = require("../../base/models/dto/response/success/NoContentResponse");
-const UpdateRoleByIdResponse_1 = require("../models/dto/response/UpdateRoleByIdResponse");
+const UpdateRoleByIdResponse_1 = require("../models/dto/response/role/UpdateRoleByIdResponse");
 let RoleController = class RoleController {
     constructor(service) {
         this.service = service;

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryParsingUtils = void 0;
 const moment_1 = __importDefault(require("moment"));
 const Logger_1 = require("../../base/utils/Logger");
-const StringUtils_1 = require("../../base/utils/StringUtils");
+const StringUtils_1 = require("./StringUtils");
 class QueryParsingUtils {
     static parseLimitStart(limit, start) {
         if (limit && Array.isArray(limit)) {

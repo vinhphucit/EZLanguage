@@ -1,6 +1,7 @@
 import moment from "moment";
 import { Logger } from "../../base/utils/Logger";
-import { DATETIME_FORMAT_NO_TZ } from "../../base/utils/StringUtils";
+import { DATETIME_FORMAT_NO_TZ } from "./StringUtils";
+
 
 export class QueryParsingUtils {
   static LIMIT: number = 100;

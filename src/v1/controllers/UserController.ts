@@ -2,12 +2,13 @@ import { Service } from "typedi";
 import { UserService } from "../services/UserService";
 import {NextFunction, Request, Response} from "express";
 import { SuccessResponse } from "../../base/models/dto/response/success/SuccessResponse";
-import { CreateUserResponse } from "../models/dto/response/CreateUserResponse";
-import { CreateUserRequest } from "../models/dto/request/CreateUserRequest";
-import { GetUsersResponse } from "../models/dto/response/GetUsersResponse";
-import { GetUserByIdResponse } from "../models/dto/response/GetUserByIdResponse";
+import { CreateUserResponse } from "../models/dto/response/user/CreateUserResponse";
+import { CreateUserRequest } from "../models/dto/request/user/CreateUserRequest";
+import { GetUsersResponse } from "../models/dto/response/user/GetUsersResponse";
+import { GetUserByIdResponse } from "../models/dto/response/user/GetUserByIdResponse";
 import { NoContentResponse } from "../../base/models/dto/response/success/NoContentResponse";
-import { UpdateUserByIdResponse } from "../models/dto/response/UpdateUserByIdResponse";
+import { UpdateUserByIdResponse } from "../models/dto/response/user/UpdateUserByIdResponse";
+import { UpdateUserByIdRequest } from "../models/dto/request/user/UpdateUserByIdRequest";
 @Service()
 export class UserController {
     constructor(private readonly service: UserService){
@@ -17,6 +18,7 @@ export class UserController {
     public async create(req: Request, res: Response, next: NextFunction) {
         try {            
             const request: CreateUserRequest = req.body;
+            
             const result = await this.service.create(request)
             next(new SuccessResponse(new CreateUserResponse(result)));
         } catch (e) {
@@ -46,7 +48,7 @@ export class UserController {
     public async updateById(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id;
-            const request = req.body;            
+            const request: UpdateUserByIdRequest = req.body;            
             const result = await this.service.updateById(id, request)
             next(new SuccessResponse(new UpdateUserByIdResponse(result)))
         } catch (e) {

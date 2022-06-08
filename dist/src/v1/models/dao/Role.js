@@ -5,11 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.roleSchema = void 0;
 const mongoose_1 = require("mongoose");
-const EzMongooseConnection_1 = __importDefault(require("../../../base/providers/EzMongooseConnection"));
+const EzMongooseConnection_1 = __importDefault(require("../../providers/EzMongooseConnection"));
 const CollectionNames_1 = require("./CollectionNames");
+const Permission_1 = require("./Permission");
 exports.roleSchema = new mongoose_1.Schema({
     name: String,
-    code: String
+    permissions: [Permission_1.permissionSchema]
 }, {
     timestamps: true
 });

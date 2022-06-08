@@ -26,5 +26,12 @@ export const env = {
     },
     cors: {
         whitelist: getOsEnv('CORS_WHITELIST'),
+    },
+    auth: {
+        confirmationTokenExpiresIn: toNumber(getOsEnv('AUTH_CONFIRM_EXPIRES_IN')),
+        accessTokenExpiresIn: toNumber(getOsEnv('AUTH_ACCESS_TOKEN_EXPIRES_IN')),
+        refreshTokenExpiresIn: toNumber(getOsEnv('AUTH_REFRESH_TOKEN_EXPIRES_IN')),
+        forgetPasswordTokenExpiresIn: toNumber(getOsEnv('FORGET_PASSWORD_TOKEN_EXPIRES_IN')),
+        
     }
 }

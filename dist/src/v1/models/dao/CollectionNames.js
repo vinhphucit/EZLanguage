@@ -10,4 +10,7 @@ class CollectionNames {
 exports.CollectionNames = CollectionNames;
 CollectionNames.USER = "user" + subfix;
 CollectionNames.ROLE = "role" + subfix;
+CollectionNames.PERMISSION = "permission" + subfix;
+CollectionNames.REFRESH_TOKEN = "refresh_token" + subfix;
+CollectionNames.RESET_PASSWORD = "reset_password" + subfix;
 //# sourceMappingURL=CollectionNames.js.map

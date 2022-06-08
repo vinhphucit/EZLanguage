@@ -15,9 +15,9 @@ class RoleRouter extends CommonRouterConfig_1.CommonRoutesConfig {
         const controller = typedi_1.default.get(RoleController_1.RoleController);
         this.router.post(``, controller.create.bind(controller));
         this.router.get(``, controller.get.bind(controller));
-        this.router.get(`:id`, controller.getById.bind(controller));
-        this.router.put(`:id`, controller.updateById.bind(controller));
-        this.router.delete(`:id`, controller.deleteById.bind(controller));
+        this.router.get(`/:id`, controller.getById.bind(controller));
+        this.router.put(`/:id`, controller.updateById.bind(controller));
+        this.router.delete(`/:id`, controller.deleteById.bind(controller));
     }
 }
 exports.RoleRouter = RoleRouter;

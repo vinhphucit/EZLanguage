@@ -24,20 +24,24 @@ const NotFoundException_1 = require("../../base/exceptions/NotFoundException");
 const typedi_1 = require("typedi");
 const RoleRepository_1 = require("../repositories/RoleRepository");
 const StringUtils_1 = require("../utils/StringUtils");
+const PermissionService_1 = require("./PermissionService");
 let RoleService = class RoleService {
     constructor(repo) {
         this.repo = repo;
     }
     create(role) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingRole = yield this.getByCode(role.code);
-            if (existingRole) {
-                throw new BadRequestException_1.BadRequestException(`Code ${role.code} already existed`);
+            const foundRole = yield this.getByName(role.name);
+            if (foundRole) {
+                throw new BadRequestException_1.BadRequestException(`Role ${role.name} already existed`);
             }
             let item = {
-                name: role.name,
-                code: role.code
+                name: role.name
             };
+            if (role.permissions) {
+                const pers = yield this.permissionService.getByCodes(role.permissions);
+                item.permissions = pers;
+            }
             return this.repo.create(item);
         });
     }
@@ -54,9 +58,14 @@ let RoleService = class RoleService {
             return result;
         });
     }
-    getByCode(code) {
+    getByIds(ids) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.repo.get(`1`, `0`, undefined, `code%eq%${code}`);
+            return yield this.repo.getByIds(ids);
+        });
+    }
+    getByName(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.repo.get(`1`, `0`, undefined, `name%eq%${name}`);
             if (!result || result.totalItems == 0)
                 return undefined;
             return result.items[0];
@@ -65,12 +74,17 @@ let RoleService = class RoleService {
     updateById(id, request) {
         return __awaiter(this, void 0, void 0, function* () {
             const entity = yield this.getById(id);
-            const existingRole = yield this.getByCode(request.code);
-            if (existingRole && existingRole.id !== entity.id) {
-                throw new BadRequestException_1.BadRequestException(`Code ${request.code} already existed`);
+            if (request.name) {
+                const existingNameEntity = yield this.getByName(request.name);
+                if (entity.id !== existingNameEntity.id) {
+                    throw new BadRequestException_1.BadRequestException(`Role ${request.name} already existed`);
+                }
+            }
+            if (request.permissions) {
+                const pers = yield this.permissionService.getByCodes(request.permissions);
+                entity.permissions = pers;
             }
             entity.name = (0, StringUtils_1.switchNull)(request.name, entity.name);
-            entity.code = (0, StringUtils_1.switchNull)(request.code, entity.code);
             const updateEntity = yield this.repo.updateById(id, entity);
             return updateEntity;
         });
@@ -82,6 +96,10 @@ let RoleService = class RoleService {
         });
     }
 };
+__decorate([
+    (0, typedi_1.Inject)(),
+    __metadata("design:type", PermissionService_1.PermissionService)
+], RoleService.prototype, "permissionService", void 0);
 RoleService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [RoleRepository_1.RoleRepository])

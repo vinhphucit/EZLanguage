@@ -23,6 +23,18 @@ export abstract class BaseRepository<T> {
     async createMany(items: Partial<T>[]): Promise<T[]> {
         return this._model.insertMany(items);
     }
+    public async getNoLimit(query: string | string[], extraQuery?: string[]): Promise<BaseList<T> | undefined> {
+        
+        let nQuery = query;
+        if (extraQuery) {
+            nQuery = QueryParsingUtils.addExtraQuery(query, extraQuery);
+        }
+        const filter = QueryParsingUtils.parseQuery(nQuery, this.getAllowedQueryFields());
+
+        const result = await Promise.all([this._model.find(filter), this._model.find(filter).countDocuments()]);
+
+        return new BaseList<T>(result[0], 0, undefined, result[1],  undefined, query ? query.toString() : undefined);
+    }
 
     public async get(limit: string | string[], start: string | string[], sort: string | string[], query: string | string[], extraQuery?: string[]): Promise<BaseList<T> | undefined> {
         const limitstart = QueryParsingUtils.parseLimitStart(limit, start);

@@ -1,10 +1,11 @@
 import {Document, Model, Schema} from 'mongoose';
-import EzMongooseConnection from "../../../base/providers/EzMongooseConnection";
+import EzMongooseConnection from "../../providers/EzMongooseConnection";
 import { CollectionNames } from "./CollectionNames";
+import { IPermission, permissionSchema } from './Permission';
 
 export interface IRole extends Document {
     name: string,
-    code: string,
+    permissions: IPermission[],
     createdAt: Date;
     updatedAt: Date;
 }
@@ -12,8 +13,8 @@ export interface IRoleModel extends Model<IRole> {
 }
 
 export const roleSchema = new Schema<IRole>({
-    name: String,
-    code: String
+    name: String,    
+    permissions: [permissionSchema]
 }, {
     timestamps: true
 });

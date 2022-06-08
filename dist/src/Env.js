@@ -52,6 +52,12 @@ exports.env = {
     },
     cors: {
         whitelist: (0, env_1.getOsEnv)('CORS_WHITELIST'),
+    },
+    auth: {
+        confirmationTokenExpiresIn: (0, env_1.toNumber)((0, env_1.getOsEnv)('AUTH_CONFIRM_EXPIRES_IN')),
+        accessTokenExpiresIn: (0, env_1.toNumber)((0, env_1.getOsEnv)('AUTH_ACCESS_TOKEN_EXPIRES_IN')),
+        refreshTokenExpiresIn: (0, env_1.toNumber)((0, env_1.getOsEnv)('AUTH_REFRESH_TOKEN_EXPIRES_IN')),
+        forgetPasswordTokenExpiresIn: (0, env_1.toNumber)((0, env_1.getOsEnv)('FORGET_PASSWORD_TOKEN_EXPIRES_IN')),
     }
 };
 //# sourceMappingURL=Env.js.map

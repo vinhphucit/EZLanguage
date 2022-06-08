@@ -41,6 +41,8 @@ const SwaggerRouter_1 = require("./v1/routers/SwaggerRouter");
 const HealthCheckRouter_1 = require("./v1/routers/HealthCheckRouter");
 const NotFoundRouter_1 = require("./v1/routers/NotFoundRouter");
 const RoleRouter_1 = require("./v1/routers/RoleRouter");
+const PermissionRouter_1 = require("./v1/routers/PermissionRouter");
+const AuthRouter_1 = require("./v1/routers/AuthRouter");
 class App {
     // const debugLog: debug.IDebugger = debug('app');
     constructor() {
@@ -68,7 +70,7 @@ class App {
         this.app.use(new ResFormaterMiddleware_1.ResFormaterMiddleware().handleResponse);
     }
     initializeRouters() {
-        this.routes.push(new SwaggerRouter_1.SwaggerRouter(this.app), new HealthCheckRouter_1.HealthCheckRouter(this.app), new UserRouter_1.UserRouter(this.app), new RoleRouter_1.RoleRouter(this.app), new NotFoundRouter_1.NotFoundRouter(this.app));
+        this.routes.push(new SwaggerRouter_1.SwaggerRouter(this.app), new HealthCheckRouter_1.HealthCheckRouter(this.app), new AuthRouter_1.AuthRouter(this.app), new UserRouter_1.UserRouter(this.app), new RoleRouter_1.RoleRouter(this.app), new PermissionRouter_1.PermissionRouter(this.app), new NotFoundRouter_1.NotFoundRouter(this.app));
     }
     initializeHandlingRequest() {
         this.app.use(new ReqFormaterMiddleware_1.ReqFormaterMiddleware().handleRequest);

@@ -24,6 +24,8 @@ const NotFoundException_1 = require("../../base/exceptions/NotFoundException");
 const typedi_1 = require("typedi");
 const UserRepository_1 = require("../repositories/UserRepository");
 const StringUtils_1 = require("../utils/StringUtils");
+const CryptoUtils_1 = require("../utils/auth/CryptoUtils");
+const RoleService_1 = require("./RoleService");
 let UserService = class UserService {
     constructor(repo) {
         this.repo = repo;
@@ -37,11 +39,16 @@ let UserService = class UserService {
             let item = {
                 firstName: user.firstName,
                 lastName: user.lastName,
+                password: yield CryptoUtils_1.CryptoUtils.hashPassword(user.password),
                 title: user.title,
                 address: user.address,
                 email: user.email,
-                mobile: user.mobile
+                mobile: user.mobile,
             };
+            if (user.roles) {
+                const roles = yield this.roleService.getByIds(user.roles.map((r) => r.id));
+                item.roles = roles;
+            }
             return this.repo.create(item);
         });
     }
@@ -74,6 +81,10 @@ let UserService = class UserService {
             entity.address = (0, StringUtils_1.switchNull)(request.address, entity.address);
             entity.mobile = (0, StringUtils_1.switchNull)(request.mobile, entity.mobile);
             entity.title = (0, StringUtils_1.switchNull)(request.title, entity.title);
+            if (request.roles) {
+                const roles = yield this.roleService.getByIds(request.roles.map((r) => r.id));
+                entity.roles = roles;
+            }
             const updateEntity = yield this.repo.updateById(id, entity);
             return updateEntity;
         });
@@ -85,6 +96,10 @@ let UserService = class UserService {
         });
     }
 };
+__decorate([
+    (0, typedi_1.Inject)(),
+    __metadata("design:type", RoleService_1.RoleService)
+], UserService.prototype, "roleService", void 0);
 UserService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [UserRepository_1.UserRepository])

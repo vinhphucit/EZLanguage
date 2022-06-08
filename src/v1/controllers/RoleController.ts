@@ -2,12 +2,12 @@ import { Service } from "typedi";
 import {NextFunction, Request, Response} from "express";
 import { SuccessResponse } from "../../base/models/dto/response/success/SuccessResponse";
 import { RoleService } from "../services/RoleService";
-import { CreateRoleRequest } from "../models/dto/request/CreateRoleRequest";
-import { CreateRoleResponse } from "../models/dto/response/CreateRoleResponse";
-import { GetRolesResponse } from "../models/dto/response/GetRolesResponse";
-import { GetRoleByIdResponse } from "../models/dto/response/GetRoleByIdResponse";
+import { CreateRoleRequest } from "../models/dto/request/role/CreateRoleRequest";
+import { CreateRoleResponse } from "../models/dto/response/role/CreateRoleResponse";
+import { GetRolesResponse } from "../models/dto/response/role/GetRolesResponse";
+import { GetRoleByIdResponse } from "../models/dto/response/role/GetRoleByIdResponse";
 import { NoContentResponse } from "../../base/models/dto/response/success/NoContentResponse";
-import { UpdateRoleByIdResponse } from "../models/dto/response/UpdateRoleByIdResponse";
+import { UpdateRoleByIdResponse } from "../models/dto/response/role/UpdateRoleByIdResponse";
 @Service()
 export class RoleController {
     constructor(private readonly service: RoleService){

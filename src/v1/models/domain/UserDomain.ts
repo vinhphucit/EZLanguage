@@ -1,4 +1,6 @@
 import { IUser } from "../dao/User";
+import { PermissionDomain } from "./PermissionDomain";
+import { RoleDomain } from "./RoleDomain";
 
 export class UserDomain {
     id: string;
@@ -9,10 +11,8 @@ export class UserDomain {
     address: string;
     email: string;
     mobile: string;
-    postcode: string;
-    countryId: string;
-    birthday: string;
-    propertyId: string;
+    status: string;
+    roles: RoleDomain[];
     createdAt: Date;
     updatedAt: Date;
     constructor() ;
@@ -27,6 +27,8 @@ export class UserDomain {
         this.address = result.address;
         this.email = result.email;
         this.mobile = result.mobile;
+        this.status = result.status;
+        this.roles = result.roles.map(r=> new RoleDomain(r));
         this.createdAt = result.createdAt;
         this.updatedAt = result.updatedAt;
     }

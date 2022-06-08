@@ -2,6 +2,9 @@ import { CommonRoutesConfig } from "./CommonRouterConfig";
 import express from "express";
 import { UserController as UserController } from "../controllers/UserController";
 import Container from "typedi";
+import { AuthenticationMiddleware } from "../middlewares/AuthenticationMiddleware";
+import { AuthorizationMiddleware } from "../middlewares/AuthorizationMiddleware";
+import { Permissions } from "../utils/auth/Permissions";
 
 export class UserRouter extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -24,10 +27,10 @@ export class UserRouter extends CommonRoutesConfig {
         next();
       }
     );
-    this.router.post(``, controller.create.bind(controller));
-    this.router.get(``, controller.get.bind(controller));    
-    this.router.get(`:id`, controller.getById.bind(controller));    
-    this.router.put(`:id`, controller.updateById.bind(controller));    
-    this.router.delete(`:id`, controller.deleteById.bind(controller));    
+    this.router.post(``,AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.Create), controller.create.bind(controller));
+    this.router.get(``, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.Read),controller.get.bind(controller));    
+    this.router.get(`/:id`, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.ReadById),controller.getById.bind(controller));    
+    this.router.put(`/:id`, AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.UpdateById), controller.updateById.bind(controller));    
+    this.router.delete(`/:id`,  AuthenticationMiddleware(), AuthorizationMiddleware(Permissions.User.DeleteById), controller.deleteById.bind(controller));    
   }
 }

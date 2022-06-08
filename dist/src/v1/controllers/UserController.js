@@ -22,11 +22,11 @@ exports.UserController = void 0;
 const typedi_1 = require("typedi");
 const UserService_1 = require("../services/UserService");
 const SuccessResponse_1 = require("../../base/models/dto/response/success/SuccessResponse");
-const CreateUserResponse_1 = require("../models/dto/response/CreateUserResponse");
-const GetUsersResponse_1 = require("../models/dto/response/GetUsersResponse");
-const GetUserByIdResponse_1 = require("../models/dto/response/GetUserByIdResponse");
+const CreateUserResponse_1 = require("../models/dto/response/user/CreateUserResponse");
+const GetUsersResponse_1 = require("../models/dto/response/user/GetUsersResponse");
+const GetUserByIdResponse_1 = require("../models/dto/response/user/GetUserByIdResponse");
 const NoContentResponse_1 = require("../../base/models/dto/response/success/NoContentResponse");
-const UpdateUserByIdResponse_1 = require("../models/dto/response/UpdateUserByIdResponse");
+const UpdateUserByIdResponse_1 = require("../models/dto/response/user/UpdateUserByIdResponse");
 let UserController = class UserController {
     constructor(service) {
         this.service = service;

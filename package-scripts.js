@@ -13,6 +13,7 @@ module.exports = {
                 'nps clean.dist',
                 'nps transpile',
                 'nps copy.tmp',
+                'nps copy.assets',
                 'nps clean.tmp',
             ),
             description: 'Builds the app into the dist directory'
@@ -132,6 +133,13 @@ module.exports = {
                 script: copyDir(
                     '../openapi_v1.json',
                     './dist'
+                ),
+                hiddenFromHelp: true
+            },
+            assets: {
+                script: copyDir(
+                    './assets',
+                    './dist/assets'
                 ),
                 hiddenFromHelp: true
             }

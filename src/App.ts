@@ -15,6 +15,8 @@ import { SwaggerRouter } from "./v1/routers/SwaggerRouter";
 import { HealthCheckRouter } from "./v1/routers/HealthCheckRouter";
 import { NotFoundRouter } from "./v1/routers/NotFoundRouter";
 import { RoleRouter } from "./v1/routers/RoleRouter";
+import { PermissionRouter } from "./v1/routers/PermissionRouter";
+import { AuthRouter } from "./v1/routers/AuthRouter";
 
 export class App {
   public app: Application = express();
@@ -48,8 +50,10 @@ export class App {
     this.routes.push(
       new SwaggerRouter(this.app),
       new HealthCheckRouter(this.app),
+      new AuthRouter(this.app),
       new UserRouter(this.app),
       new RoleRouter(this.app),
+      new PermissionRouter(this.app),      
       new NotFoundRouter(this.app)
     );
   }

@@ -30,6 +30,17 @@ class BaseRepository {
             return this._model.insertMany(items);
         });
     }
+    getNoLimit(query, extraQuery) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let nQuery = query;
+            if (extraQuery) {
+                nQuery = QueryParsingUtils_1.QueryParsingUtils.addExtraQuery(query, extraQuery);
+            }
+            const filter = QueryParsingUtils_1.QueryParsingUtils.parseQuery(nQuery, this.getAllowedQueryFields());
+            const result = yield Promise.all([this._model.find(filter), this._model.find(filter).countDocuments()]);
+            return new BaseList_1.BaseList(result[0], 0, undefined, result[1], undefined, query ? query.toString() : undefined);
+        });
+    }
     get(limit, start, sort, query, extraQuery) {
         return __awaiter(this, void 0, void 0, function* () {
             const limitstart = QueryParsingUtils_1.QueryParsingUtils.parseLimitStart(limit, start);
