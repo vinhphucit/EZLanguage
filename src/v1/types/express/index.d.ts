@@ -1,64 +1,31 @@
 declare namespace Express {
   export interface Request {
-    payload: JwtPayload;
-    currentPmsProperty: CurrentPmsProperty;
+      payload: JwtPayload;
   }
 }
 
-declare interface CurrentPmsProperty {
+declare interface CurrentUser {
   id: string;
-  name: string;
-  description: string;
-  timezone: string;
+  firstname: string;
+  lastname: string;
+  email: string;
   active?: boolean;
-  apiKey?: string;
 }
 
 declare interface JwtPayload {
   /**
    * jwt aud property
    */
-  aud: string[] | string;
-
-  /**
-   * issuer
-   */
-  iss: string;
-
-  /**
-   * Scope
-   */
-  scope: string;
-
-  /**
-   * Account Id (for guest jwt);
-   */
-  tenant_id: string;
-
-  /**
-   * User id or Guest Id
-   */
-  sub: string;
-
-  /**
-   * Account Id
-   */
-  acc: string;
-
+  user: CurrentUser;
   /**
    * Roles
    */
-  role: string;
+  roles: string[];
 
   /**
    * Permissions
    */
-  permissions: string;
-
-  /**
-   * Spaces
-   */
-  spaces: string[];
+  permissions: string[];
 
   /**
    * Time issued (miliseconds)
