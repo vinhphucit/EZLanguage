@@ -27,11 +27,13 @@ export const env = {
     cors: {
         whitelist: getOsEnv('CORS_WHITELIST'),
     },
-    auth: {
-        confirmationTokenExpiresIn: toNumber(getOsEnv('AUTH_CONFIRM_EXPIRES_IN')),
+    auth: {        
         accessTokenExpiresIn: toNumber(getOsEnv('AUTH_ACCESS_TOKEN_EXPIRES_IN')),
         refreshTokenExpiresIn: toNumber(getOsEnv('AUTH_REFRESH_TOKEN_EXPIRES_IN')),
-        forgetPasswordTokenExpiresIn: toNumber(getOsEnv('FORGET_PASSWORD_TOKEN_EXPIRES_IN')),
+        emailVerificationExpiresIn: toNumber(getOsEnv('EMAIL_VERIFICATION_EXPIRES_IN')),
+        emailVerificationMaxTryCount: toNumber(getOsEnv('EMAIL_VERIFICATION_MAX_TRY_COUNT')),
+        resetPasswordExpiresIn: toNumber(getOsEnv('RESET_PASSWORD_EXPIRES_IN')),
+        resetPasswordMaxTryCount: toNumber(getOsEnv('RESET_PASSWORD_MAX_TRY_COUNT')),
         
     }
 }

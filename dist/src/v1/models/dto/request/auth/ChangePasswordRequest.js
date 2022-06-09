@@ -15,12 +15,6 @@ const IsNotEmptyString_1 = require("../../../../utils/validation/IsNotEmptyStrin
 class ChangePasswordRequest {
 }
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.Length)(1, 100),
-    (0, IsNotEmptyString_1.IsNotEmptyString)(),
-    __metadata("design:type", String)
-], ChangePasswordRequest.prototype, "email", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Length)(1, 50),
     (0, IsNotEmptyString_1.IsNotEmptyString)(),

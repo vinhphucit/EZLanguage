@@ -10,6 +10,7 @@ import { genRandomString, switchNull } from "../utils/StringUtils";
 import { CryptoUtils } from "../utils/auth/CryptoUtils";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { RoleService } from "./RoleService";
+import { UserStatus } from "../enums/UserStatus";
 
 @Service()
 export class UserService {
@@ -20,27 +21,11 @@ export class UserService {
 
   public async create(user: CreateUserRequest): Promise<IUser> {
     const existingUser = await this.getByEmail(user.email);
-    if (existingUser) {
-      throw new BadRequestException(`Email ${user.email} already existed`);
+    if (existingUser) {      
+        throw new BadRequestException(`Email ${user.email} already existed`);      
+    } else {
+      return await this._createNewUser(user);
     }
-    let item: Partial<IUser> = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      password: await CryptoUtils.hashPassword(user.password),
-      title: user.title,
-      address: user.address,
-      email: user.email,
-      mobile: user.mobile,
-    };
-
-    if (user.roles) {
-      const roles = await this.roleService.getByIds(
-        user.roles.map((r) => r.id)
-      );
-      item.roles = roles;
-    }
-
-    return this.repo.create(item);
   }
 
   async get(
@@ -68,6 +53,17 @@ export class UserService {
     if (!result || result.totalItems == 0) return undefined;
     return result.items[0];
   }
+  async update(user: IUser): Promise<IUser | undefined> {
+    return await user.save();
+  }
+
+  async updatePassword(
+    user: IUser,
+    password: string
+  ): Promise<IUser | undefined> {
+    user.password = await CryptoUtils.hashPassword(password);
+    return user.save();
+  }
 
   async updateById(
     id: string,
@@ -93,8 +89,38 @@ export class UserService {
     return updateEntity;
   }
 
+  async updateStatusByUser(
+    user: IUser,
+    status: string
+  ): Promise<IUser | undefined> {
+    user.status = status;
+    return await user.save();
+  }
+
   async deleteById(id: string): Promise<IUser> {
     await this.getById(id);
     return this.repo.removeById(id);
   }
+
+  private async _createNewUser(user: CreateUserRequest): Promise<IUser> {
+    let item: Partial<IUser> = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      password: await CryptoUtils.hashPassword(user.password),
+      title: user.title,
+      address: user.address,
+      email: user.email,
+      mobile: user.mobile,
+    };
+
+    if (user.roles) {
+      const roles = await this.roleService.getByIds(
+        user.roles.map((r) => r.id)
+      );
+      item.roles = roles;
+    }
+
+    return this.repo.create(item);
+  }
+
 }

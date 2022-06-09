@@ -20,11 +20,11 @@ exports.userSchema = new mongoose_1.Schema({
     status: {
         type: String,
         enum: [UserStatus_1.UserStatus.NOT_ACTIVE, UserStatus_1.UserStatus.ACTIVE, UserStatus_1.UserStatus.BLOCK],
-        default: UserStatus_1.UserStatus.NOT_ACTIVE
+        default: UserStatus_1.UserStatus.NOT_ACTIVE,
     },
-    roles: [Role_1.roleSchema]
+    roles: [Role_1.roleSchema],
 }, {
-    timestamps: true
+    timestamps: true,
 });
 const User = EzMongooseConnection_1.default.model(CollectionNames_1.CollectionNames.USER, exports.userSchema);
 exports.default = User;

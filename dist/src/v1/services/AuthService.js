@@ -19,58 +19,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-const BadRequestException_1 = require("../../base/exceptions/BadRequestException");
-const NotFoundException_1 = require("../../base/exceptions/NotFoundException");
 const typedi_1 = require("typedi");
-const UserRepository_1 = require("../repositories/UserRepository");
-const UserStatus_1 = require("../enums/UserStatus");
 const InternalServerException_1 = require("../../base/exceptions/InternalServerException");
 const Env_1 = require("../../Env");
 const SignInResponse_1 = require("../models/dto/response/auth/SignInResponse");
 const JwtUtils_1 = require("../utils/auth/JwtUtils");
+const DateUtils_1 = require("../utils/DateUtils");
+const RefreshTokenService_1 = require("./RefreshTokenService");
+const RefreshTokenStatus_1 = require("../enums/RefreshTokenStatus");
+const UserService_1 = require("./UserService");
+const RefreshTokenRepository_1 = require("../repositories/RefreshTokenRepository");
 let AuthService = class AuthService {
     constructor(repo) {
         this.repo = repo;
     }
-    generateAccessToken(found_user) {
+    generateAccessToken(user, previousRefreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!found_user)
+            if (!user)
                 throw new InternalServerException_1.InternalServerException("User is not found");
+            const expiryAccessToken = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.accessTokenExpiresIn);
+            const expiryRefreshToken = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.refreshTokenExpiresIn);
+            const newRefreshToken = yield this.refreshTokenService.create(user.id, expiryRefreshToken);
+            const refreshToken = JwtUtils_1.JwtUtils.createRefreshToken(user, newRefreshToken.id, expiryRefreshToken);
+            if (previousRefreshToken) {
+                yield this.refreshTokenService.updateRefreshTokenChain(newRefreshToken, previousRefreshToken);
+            }
             let newAuth = new SignInResponse_1.SignInResponse();
-            const timestamp_accesstoken_expiry = Math.floor(Date.now() / 1000) + Env_1.env.auth.accessTokenExpiresIn * 60;
-            newAuth.accessToken = JwtUtils_1.JwtUtils.createAccess(found_user, timestamp_accesstoken_expiry);
-            yield JwtUtils_1.JwtUtils.verifyJwtToken(newAuth.accessToken);
-            newAuth.accessTokenExpiresAt = timestamp_accesstoken_expiry;
-            //Create the refresh token
-            const timestamp_refresh_expiry = Math.floor(Date.now() / 1000) + Env_1.env.auth.refreshTokenExpiresIn * 60;
-            newAuth.refreshToken = JwtUtils_1.JwtUtils.createRefresh(found_user, timestamp_refresh_expiry);
-            newAuth.refreshTokenExpiresAt = timestamp_refresh_expiry;
+            newAuth.accessToken = JwtUtils_1.JwtUtils.createAccess(user, expiryAccessToken);
+            newAuth.accessTokenExpiresAt = expiryAccessToken;
+            newAuth.refreshToken = refreshToken;
+            newAuth.refreshTokenExpiresAt = expiryRefreshToken;
             return newAuth;
         });
     }
-    refreshToken(refreshRequest) {
+    revokeRefreshToken(foundRefreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            let decoded;
-            try {
-                decoded = JwtUtils_1.JwtUtils.verifyJwtToken(refreshRequest.token);
+            let tokenChain = foundRefreshToken.tokenChain;
+            if (!tokenChain) {
+                tokenChain = [];
             }
-            catch (error) {
-                throw new BadRequestException_1.BadRequestException("AccessToken is not in valid format");
-            }
-            const found_user = yield this.repo.getById(decoded["id"]);
-            if (!found_user) {
-                throw new NotFoundException_1.NotFoundException(`User not found`);
-            }
-            if (found_user.status !== UserStatus_1.UserStatus.ACTIVE) {
-                throw new BadRequestException_1.BadRequestException(`User is not activated`);
-            }
-            return this.generateAccessToken(found_user);
+            tokenChain.push(foundRefreshToken.id);
+            yield this.repo.updateStatusByIds(tokenChain, RefreshTokenStatus_1.RefreshTokenStatus.BLOCK);
         });
     }
 };
+__decorate([
+    (0, typedi_1.Inject)(),
+    __metadata("design:type", RefreshTokenService_1.RefreshTokenService)
+], AuthService.prototype, "refreshTokenService", void 0);
+__decorate([
+    (0, typedi_1.Inject)(),
+    __metadata("design:type", UserService_1.UserService)
+], AuthService.prototype, "userService", void 0);
 AuthService = __decorate([
     (0, typedi_1.Service)(),
-    __metadata("design:paramtypes", [UserRepository_1.UserRepository])
+    __metadata("design:paramtypes", [RefreshTokenRepository_1.RefreshTokenRepository])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=AuthService.js.map

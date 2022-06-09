@@ -23,29 +23,28 @@ export class JwtUtils {
    * @param user User entity that the refresh token shall be created for
    * @param expiry_timestamp Timestamp for the token expiry. Will be generated if not provided.
    */
-  public static createRefresh(user: IUser, expiry_timestamp?: number): string {
-    if (!expiry_timestamp) {
-      expiry_timestamp = Math.floor(Date.now() / 1000) + 10 * 36000;
-    }
+  public static createRefreshToken(user: IUser, refreshTokenId: string, expiry_timestamp?: number): string {
+    let signOptions: jsonwebtoken.SignOptions = {
+      algorithm: "RS256",
+    };
     return jsonwebtoken.sign(
       {
-        id: user.id,
+        userId: user.id,
+        refreshTokenId,
         exp: expiry_timestamp,
       },
-      this.privateKey
+      this.privateKey,
+      signOptions
     );
   }
 
   /**
    * Creates a new access token for a given user
    * @param user User entity that the access token shall be created for
-   * @param expiry_timestamp Timestamp for the token expiry. Will be generated if not provided.
+   * @param expiryDate Timestamp for the token expiry. Will be generated if not provided.
    */
-  public static createAccess(user: IUser, expiry_timestamp?: number): string {
+  public static createAccess(user: IUser, expiryDate?: number): string {
     let jwtPayload = new JwtPayload(user);
-    if (!expiry_timestamp) {
-      expiry_timestamp = Math.floor(Date.now() / 1000) + 10 * 36000;
-    }
 
     let signOptions: jsonwebtoken.SignOptions = {
       algorithm: "RS256",
@@ -53,7 +52,7 @@ export class JwtUtils {
     const accessToken = jsonwebtoken.sign(
       {
         ...jwtPayload,
-        exp: expiry_timestamp,
+        exp: expiryDate,
       },
       this.privateKey,
       signOptions
@@ -67,16 +66,17 @@ export class JwtUtils {
    * The token is valid for 15 minutes or 1 use - whatever comes first.
    * @param user User entity that the password reset token shall be created for
    */
-  public static createReset(user: IUser): string {
-    let expiry_timestamp =
-      Math.floor(Date.now() / 1000) +
-      env.auth.forgetPasswordTokenExpiresIn * 60 * 60;
+  public static createReset(user: IUser, expiry_timestamp: number): string {
+    let signOptions: jsonwebtoken.SignOptions = {
+      algorithm: "RS256",
+    };
     return jsonwebtoken.sign(
       {
         id: user.id,
         exp: expiry_timestamp,
       },
-      this.privateKey
+      this.privateKey,
+      signOptions
     );
   }
 

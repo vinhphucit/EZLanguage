@@ -40,7 +40,6 @@ const fs_1 = __importDefault(require("fs"));
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
 const path_1 = __importDefault(require("path"));
 const JwtPayload_1 = require("../../models/domain/JwtPayload");
-const Env_1 = require("../../../Env");
 /**
  * This class is responsible for all things JJWT creation.
  */
@@ -50,29 +49,27 @@ class JwtUtils {
      * @param user User entity that the refresh token shall be created for
      * @param expiry_timestamp Timestamp for the token expiry. Will be generated if not provided.
      */
-    static createRefresh(user, expiry_timestamp) {
-        if (!expiry_timestamp) {
-            expiry_timestamp = Math.floor(Date.now() / 1000) + 10 * 36000;
-        }
+    static createRefreshToken(user, refreshTokenId, expiry_timestamp) {
+        let signOptions = {
+            algorithm: "RS256",
+        };
         return jsonwebtoken.sign({
-            id: user.id,
+            userId: user.id,
+            refreshTokenId,
             exp: expiry_timestamp,
-        }, this.privateKey);
+        }, this.privateKey, signOptions);
     }
     /**
      * Creates a new access token for a given user
      * @param user User entity that the access token shall be created for
-     * @param expiry_timestamp Timestamp for the token expiry. Will be generated if not provided.
+     * @param expiryDate Timestamp for the token expiry. Will be generated if not provided.
      */
-    static createAccess(user, expiry_timestamp) {
+    static createAccess(user, expiryDate) {
         let jwtPayload = new JwtPayload_1.JwtPayload(user);
-        if (!expiry_timestamp) {
-            expiry_timestamp = Math.floor(Date.now() / 1000) + 10 * 36000;
-        }
         let signOptions = {
             algorithm: "RS256",
         };
-        const accessToken = jsonwebtoken.sign(Object.assign(Object.assign({}, jwtPayload), { exp: expiry_timestamp }), this.privateKey, signOptions);
+        const accessToken = jsonwebtoken.sign(Object.assign(Object.assign({}, jwtPayload), { exp: expiryDate }), this.privateKey, signOptions);
         return accessToken;
     }
     /**
@@ -80,13 +77,14 @@ class JwtUtils {
      * The token is valid for 15 minutes or 1 use - whatever comes first.
      * @param user User entity that the password reset token shall be created for
      */
-    static createReset(user) {
-        let expiry_timestamp = Math.floor(Date.now() / 1000) +
-            Env_1.env.auth.forgetPasswordTokenExpiresIn * 60 * 60;
+    static createReset(user, expiry_timestamp) {
+        let signOptions = {
+            algorithm: "RS256",
+        };
         return jsonwebtoken.sign({
             id: user.id,
             exp: expiry_timestamp,
-        }, this.privateKey);
+        }, this.privateKey, signOptions);
     }
     /**
      * Creates a registerToken for registration.

@@ -15,6 +15,7 @@ const ConfirmResetPasswordRequest_1 = require("../models/dto/request/auth/Confir
 const VerifyEmailRequest_1 = require("../models/dto/request/auth/VerifyEmailRequest");
 const ChangePasswordRequest_1 = require("../models/dto/request/auth/ChangePasswordRequest");
 const RefreshTokenRequest_1 = require("../models/dto/request/auth/RefreshTokenRequest");
+const SignOutRequest_1 = require("../models/dto/request/auth/SignOutRequest");
 class AuthRouter extends CommonRouterConfig_1.CommonRoutesConfig {
     constructor(app) {
         super(app, "auth", `auth/`);
@@ -29,6 +30,7 @@ class AuthRouter extends CommonRouterConfig_1.CommonRoutesConfig {
         });
         this.router.post(`/signUp`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignUpRequest_1.SignUpRequest), controller.signUp.bind(controller));
         this.router.post(`/signIn`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignInRequest_1.SignInRequest), controller.signIn.bind(controller));
+        this.router.post(`/signOut`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignOutRequest_1.SignOutRequest), controller.signOut.bind(controller));
         this.router.post(`/resetPassword`, (0, ValidationMiddleware_1.ValidationMiddleware)(ResetPasswordRequest_1.ResetPasswordRequest), controller.resetPassword.bind(controller));
         this.router.post(`/confirmResetPassword`, (0, ValidationMiddleware_1.ValidationMiddleware)(ConfirmResetPasswordRequest_1.ConfirmResetPasswordRequest), controller.confirmResetPassword.bind(controller));
         this.router.post(`/changePassword`, (0, ValidationMiddleware_1.ValidationMiddleware)(ChangePasswordRequest_1.ChangePasswordRequest), controller.changePassword.bind(controller));

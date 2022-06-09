@@ -29,16 +29,25 @@ const BadRequestException_1 = require("../../base/exceptions/BadRequestException
 const UserStatus_1 = require("../enums/UserStatus");
 const CryptoUtils_1 = require("../utils/auth/CryptoUtils");
 const JwtUtils_1 = require("../utils/auth/JwtUtils");
+const RefreshTokenService_1 = require("../services/RefreshTokenService");
+const RefreshTokenStatus_1 = require("../enums/RefreshTokenStatus");
+const UserChoreService_1 = require("../services/UserChoreService");
+const StringUtils_1 = require("../utils/StringUtils");
+const RequestUtils_1 = require("../utils/RequestUtils");
 let AuthController = class AuthController {
-    constructor(authService, userService) {
+    constructor(authService, userService, userChoreService, refreshTokenService) {
         this.authService = authService;
         this.userService = userService;
+        this.userChoreService = userChoreService;
+        this.refreshTokenService = refreshTokenService;
     }
     signUp(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const rq = req.body;
                 const user = yield this.userService.create(rq);
+                const verificationCode = (0, StringUtils_1.genRandomString)(10);
+                yield this.userChoreService.updateEmailVerificationCodeByUserId(user.id, verificationCode);
                 next(new SuccessResponse_1.SuccessResponse(user));
             }
             catch (e) {
@@ -72,22 +81,36 @@ let AuthController = class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const rq = req.body;
-                let decoded;
-                try {
-                    decoded = JwtUtils_1.JwtUtils.verifyJwtToken(rq.token);
+                let token = yield JwtUtils_1.JwtUtils.verifyJwtToken(rq.token);
+                const foundRefreshToken = yield this.refreshTokenService.getById(token.refreshTokenId);
+                if (!foundRefreshToken ||
+                    foundRefreshToken.status !== RefreshTokenStatus_1.RefreshTokenStatus.ACTIVE) {
+                    throw new BadRequestException_1.BadRequestException("Invalid RefreshToken");
                 }
-                catch (error) {
-                    throw new BadRequestException_1.BadRequestException("AccessToken is not in valid format");
-                }
-                const found_user = yield this.userService.getById(decoded["id"]);
-                if (!found_user) {
-                    throw new NotFoundException_1.NotFoundException(`User not found`);
-                }
-                if (found_user.status !== UserStatus_1.UserStatus.ACTIVE) {
+                const foundUser = yield this.userService.getById(token.userId);
+                if (foundUser.status !== UserStatus_1.UserStatus.ACTIVE) {
                     throw new BadRequestException_1.BadRequestException(`User is not activated`);
                 }
-                const response = this.authService.generateAccessToken(found_user);
+                const response = yield this.authService.generateAccessToken(foundUser, token.refreshTokenId);
                 next(new SuccessResponse_1.SuccessResponse(response));
+            }
+            catch (e) {
+                return next(e);
+            }
+        });
+    }
+    signOut(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const rq = req.body;
+                let token = yield JwtUtils_1.JwtUtils.verifyJwtToken(rq.token);
+                const foundRefreshToken = yield this.refreshTokenService.getById(token.refreshTokenId);
+                if (!foundRefreshToken ||
+                    foundRefreshToken.status !== RefreshTokenStatus_1.RefreshTokenStatus.ACTIVE) {
+                    throw new BadRequestException_1.BadRequestException("Invalid RefreshToken");
+                }
+                yield this.authService.revokeRefreshToken(foundRefreshToken);
+                next(new NoContentResponse_1.NoContentResponse());
             }
             catch (e) {
                 return next(e);
@@ -105,7 +128,8 @@ let AuthController = class AuthController {
                 if (existingUser.status !== UserStatus_1.UserStatus.ACTIVE) {
                     throw new BadRequestException_1.BadRequestException("User has not activated yet");
                 }
-                const response = JwtUtils_1.JwtUtils.createReset(existingUser);
+                const verificationCode = (0, StringUtils_1.genRandomString)(10);
+                yield this.userChoreService.updateResetPasswordCodeByUserId(existingUser.id, verificationCode);
                 next(new NoContentResponse_1.NoContentResponse());
             }
             catch (e) {
@@ -124,7 +148,8 @@ let AuthController = class AuthController {
                 if (existingUser.status !== UserStatus_1.UserStatus.ACTIVE) {
                     throw new BadRequestException_1.BadRequestException("User has not activated yet");
                 }
-                const response = JwtUtils_1.JwtUtils.createReset(existingUser);
+                yield this.userChoreService.verifyRefreshTokenByUserId(existingUser.id, rq.token);
+                yield this.userService.updatePassword(existingUser, rq.password);
                 next(new NoContentResponse_1.NoContentResponse());
             }
             catch (e) {
@@ -135,6 +160,16 @@ let AuthController = class AuthController {
     changePassword(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const rq = req.body;
+                const userId = (0, RequestUtils_1.getRequestUserId)(req);
+                const existingUser = yield this.userService.getById(userId);
+                if (existingUser.status !== UserStatus_1.UserStatus.ACTIVE) {
+                    throw new BadRequestException_1.BadRequestException("User has not activated yet");
+                }
+                if (!(yield CryptoUtils_1.CryptoUtils.comparePassword(existingUser.password, rq.oldPassword))) {
+                    throw new BadRequestException_1.BadRequestException("Password is not correct");
+                }
+                this.userService.updatePassword(existingUser, rq.newPassword);
                 next(new NoContentResponse_1.NoContentResponse());
             }
             catch (e) {
@@ -145,6 +180,15 @@ let AuthController = class AuthController {
     verifyEmail(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const rq = req.body;
+                const existingUser = yield this.userService.getByEmail(rq.email);
+                if (!existingUser) {
+                    throw new NotFoundException_1.NotFoundException(`User ${rq.email} doesn't exist`);
+                }
+                if (existingUser.status === UserStatus_1.UserStatus.NOT_ACTIVE) {
+                    yield this.userChoreService.verifyEmailVerificationCodeByUserId(existingUser.id, rq.code);
+                    yield this.userService.updateStatusByUser(existingUser, UserStatus_1.UserStatus.ACTIVE);
+                }
                 next(new NoContentResponse_1.NoContentResponse());
             }
             catch (e) {
@@ -156,7 +200,9 @@ let AuthController = class AuthController {
 AuthController = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [AuthService_1.AuthService,
-        UserService_1.UserService])
+        UserService_1.UserService,
+        UserChoreService_1.UserChoreService,
+        RefreshTokenService_1.RefreshTokenService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=AuthController.js.map

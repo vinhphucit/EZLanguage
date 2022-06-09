@@ -3,7 +3,6 @@ import { NotFoundException } from "../../base/exceptions/NotFoundException";
 import { Inject, Service } from "typedi";
 import { BaseList } from "../models/dao/BaseList";
 import { IRole } from "../models/dao/Role";
-
 import { CreateRoleRequest } from "../models/dto/request/role/CreateRoleRequest";
 import { UpdateRoleRequest } from "../models/dto/request/role/UpdateRoleRequest";
 import { RoleRepository } from "../repositories/RoleRepository";

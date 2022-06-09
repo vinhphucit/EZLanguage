@@ -178,7 +178,33 @@
                 ]
             }
         },
-        "/verifyEmail": {
+        "/auth/signOut": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "SignOut",
+                "operationId": "signOut",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignOutRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Successfull Operation"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/auth/verifyEmail": {
             "post": {
                 "tags": [
                     "Auth"
@@ -209,7 +235,7 @@
                 ]
             }
         },
-        "/resetPassword": {
+        "/auth/resetPassword": {
             "post": {
                 "tags": [
                     "Auth"
@@ -240,7 +266,7 @@
                 ]
             }
         },
-        "/confirmResetPassword": {
+        "/auth/confirmResetPassword": {
             "post": {
                 "tags": [
                     "Auth"
@@ -271,7 +297,7 @@
                 ]
             }
         },
-        "/changePassword": {
+        "/auth/changePassword": {
             "post": {
                 "tags": [
                     "Auth"
@@ -1067,6 +1093,14 @@
                 }
             },
             "RefreshTokenRequest": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SignOutRequest": {
                 "type": "object",
                 "properties": {
                     "token": {

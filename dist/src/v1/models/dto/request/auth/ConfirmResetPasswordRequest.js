@@ -10,25 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfirmResetPasswordRequest = void 0;
-const class_validator_1 = require("class-validator");
 const IsNotEmptyString_1 = require("../../../../utils/validation/IsNotEmptyString");
 class ConfirmResetPasswordRequest {
 }
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.Length)(1, 100),
     (0, IsNotEmptyString_1.IsNotEmptyString)(),
     __metadata("design:type", String)
 ], ConfirmResetPasswordRequest.prototype, "email", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.Length)(1, 100),
     (0, IsNotEmptyString_1.IsNotEmptyString)(),
     __metadata("design:type", String)
 ], ConfirmResetPasswordRequest.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.Length)(1, 100),
     (0, IsNotEmptyString_1.IsNotEmptyString)(),
     __metadata("design:type", String)
 ], ConfirmResetPasswordRequest.prototype, "token", void 0);

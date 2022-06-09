@@ -1,21 +1,29 @@
 import {Document, Model, Schema} from 'mongoose';
+import { RefreshTokenStatus } from '../../enums/RefreshTokenStatus';
 import EzMongooseConnection from "../../providers/EzMongooseConnection";
 import { CollectionNames } from "./CollectionNames";
 
-export interface IRefreshToken extends Document {
-    refreshToken: string,
+export interface IRefreshToken extends Document {    
     userId: string,
-    expiresIn: number,
+    expiresAt: number,
+    status: string,
+    tokenChain: string[],
     createdAt: Date;
     updatedAt: Date;
+    
 }
 export interface IRefreshTokenModel extends Model<IRefreshToken> {
 }
 
-export const refreshTokenSchema = new Schema<IRefreshToken>({
-    refreshToken: String,
+export const refreshTokenSchema = new Schema<IRefreshToken>({    
     userId: String,
-    expiresIn: Number,
+    expiresAt: Number,
+    status: {
+        type:String,
+        enum: [RefreshTokenStatus.ACTIVE, RefreshTokenStatus.BLOCK],
+        default: RefreshTokenStatus.ACTIVE
+    },
+    tokenChain: [String]
 }, {
     timestamps: true
 });

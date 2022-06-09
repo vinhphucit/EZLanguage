@@ -36,20 +36,9 @@ let UserService = class UserService {
             if (existingUser) {
                 throw new BadRequestException_1.BadRequestException(`Email ${user.email} already existed`);
             }
-            let item = {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                password: yield CryptoUtils_1.CryptoUtils.hashPassword(user.password),
-                title: user.title,
-                address: user.address,
-                email: user.email,
-                mobile: user.mobile,
-            };
-            if (user.roles) {
-                const roles = yield this.roleService.getByIds(user.roles.map((r) => r.id));
-                item.roles = roles;
+            else {
+                return yield this._createNewUser(user);
             }
-            return this.repo.create(item);
         });
     }
     get(limit, start, sort, query) {
@@ -73,6 +62,17 @@ let UserService = class UserService {
             return result.items[0];
         });
     }
+    update(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user.save();
+        });
+    }
+    updatePassword(user, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user.password = yield CryptoUtils_1.CryptoUtils.hashPassword(password);
+            return user.save();
+        });
+    }
     updateById(id, request) {
         return __awaiter(this, void 0, void 0, function* () {
             const entity = yield this.getById(id);
@@ -89,10 +89,34 @@ let UserService = class UserService {
             return updateEntity;
         });
     }
+    updateStatusByUser(user, status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user.status = status;
+            return yield user.save();
+        });
+    }
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.getById(id);
             return this.repo.removeById(id);
+        });
+    }
+    _createNewUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: yield CryptoUtils_1.CryptoUtils.hashPassword(user.password),
+                title: user.title,
+                address: user.address,
+                email: user.email,
+                mobile: user.mobile,
+            };
+            if (user.roles) {
+                const roles = yield this.roleService.getByIds(user.roles.map((r) => r.id));
+                item.roles = roles;
+            }
+            return this.repo.create(item);
         });
     }
 };

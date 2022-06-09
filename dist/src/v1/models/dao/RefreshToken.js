@@ -5,12 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshTokenSchema = void 0;
 const mongoose_1 = require("mongoose");
+const RefreshTokenStatus_1 = require("../../enums/RefreshTokenStatus");
 const EzMongooseConnection_1 = __importDefault(require("../../providers/EzMongooseConnection"));
 const CollectionNames_1 = require("./CollectionNames");
 exports.refreshTokenSchema = new mongoose_1.Schema({
-    refreshToken: String,
     userId: String,
-    expiresIn: Number,
+    expiresAt: Number,
+    status: {
+        type: String,
+        enum: [RefreshTokenStatus_1.RefreshTokenStatus.ACTIVE, RefreshTokenStatus_1.RefreshTokenStatus.BLOCK],
+        default: RefreshTokenStatus_1.RefreshTokenStatus.ACTIVE
+    },
+    tokenChain: [String]
 }, {
     timestamps: true
 });

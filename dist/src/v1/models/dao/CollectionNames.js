@@ -9,6 +9,7 @@ class CollectionNames {
 }
 exports.CollectionNames = CollectionNames;
 CollectionNames.USER = "user" + subfix;
+CollectionNames.USER_CHORE = "user_chore" + subfix;
 CollectionNames.ROLE = "role" + subfix;
 CollectionNames.PERMISSION = "permission" + subfix;
 CollectionNames.REFRESH_TOKEN = "refresh_token" + subfix;
