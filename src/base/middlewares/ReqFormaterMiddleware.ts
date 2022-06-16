@@ -8,7 +8,8 @@ export class ReqFormaterMiddleware {
         
         const {method, url, body, originalUrl} = request;
         if (!BLACKLIST_LOG.includes(url) && !originalUrl.startsWith(SWAGGER_PATH)) {
-            Logger.info("--> Method:" + method + " --> " + originalUrl);            
+            Logger.info("--> Method:" + method + " --> " + originalUrl);           
+            Logger.info("--> Body:" + body?JSON.stringify(body):''); 
         }
         next()
     }

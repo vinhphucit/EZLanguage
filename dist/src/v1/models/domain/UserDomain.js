@@ -15,7 +15,7 @@ class UserDomain {
         this.email = result.email;
         this.mobile = result.mobile;
         this.status = result.status;
-        this.roles = result.roles.map(r => new RoleDomain_1.RoleDomain(r));
+        this.roles = result.roles.map((r) => new RoleDomain_1.RoleDomain(r));
         this.createdAt = result.createdAt;
         this.updatedAt = result.updatedAt;
     }

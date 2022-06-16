@@ -35,6 +35,7 @@ let UserController = class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = req.body;
+                request.password = undefined;
                 const result = yield this.service.create(request);
                 next(new SuccessResponse_1.SuccessResponse(new CreateUserResponse_1.CreateUserResponse(result)));
             }

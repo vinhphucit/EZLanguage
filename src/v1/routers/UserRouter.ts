@@ -5,6 +5,9 @@ import Container from "typedi";
 import { AuthenticationMiddleware } from "../middlewares/AuthenticationMiddleware";
 import { AuthorizationMiddleware } from "../middlewares/AuthorizationMiddleware";
 import { Permissions } from "../utils/auth/Permissions";
+import { ValidationMiddleware } from "../middlewares/ValidationMiddleware";
+import { CreateUserRequest } from "../models/dto/request/user/CreateUserRequest";
+import { UpdateUserByIdRequest } from "../models/dto/request/user/UpdateUserByIdRequest";
 
 export class UserRouter extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -18,6 +21,7 @@ export class UserRouter extends CommonRoutesConfig {
     this.router.post(
       ``,
       AuthorizationMiddleware(Permissions.User.Create),
+      ValidationMiddleware(CreateUserRequest),
       controller.create.bind(controller)
     );
     this.router.get(
@@ -33,6 +37,7 @@ export class UserRouter extends CommonRoutesConfig {
     this.router.put(
       `/:id`,    
       AuthorizationMiddleware(Permissions.User.UpdateById),
+      ValidationMiddleware(UpdateUserByIdRequest),
       controller.updateById.bind(controller)
     );
     this.router.delete(

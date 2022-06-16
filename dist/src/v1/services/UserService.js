@@ -104,9 +104,9 @@ let UserService = class UserService {
     _createNewUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             let item = {
+                password: user.password ? (yield CryptoUtils_1.CryptoUtils.hashPassword(user.password)) : undefined,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                password: yield CryptoUtils_1.CryptoUtils.hashPassword(user.password),
                 title: user.title,
                 address: user.address,
                 email: user.email,

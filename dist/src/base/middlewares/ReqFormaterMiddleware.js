@@ -8,6 +8,7 @@ class ReqFormaterMiddleware {
         const { method, url, body, originalUrl } = request;
         if (!Constants_1.BLACKLIST_LOG.includes(url) && !originalUrl.startsWith(Constants_1.SWAGGER_PATH)) {
             Logger_1.Logger.info("--> Method:" + method + " --> " + originalUrl);
+            Logger_1.Logger.info("--> Body:" + body ? JSON.stringify(body) : '');
         }
         next();
     }

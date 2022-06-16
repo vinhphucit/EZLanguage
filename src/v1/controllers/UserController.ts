@@ -17,8 +17,8 @@ export class UserController {
 
     public async create(req: Request, res: Response, next: NextFunction) {
         try {            
-            const request: CreateUserRequest = req.body;
-            
+            const request = req.body;
+            request.password = undefined;
             const result = await this.service.create(request)
             next(new SuccessResponse(new CreateUserResponse(result)));
         } catch (e) {

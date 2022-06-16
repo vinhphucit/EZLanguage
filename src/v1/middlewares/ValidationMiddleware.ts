@@ -1,4 +1,4 @@
-import {plainToClass} from 'class-transformer';
+import {plainToClass, plainToInstance} from 'class-transformer';
 import {validate, ValidationError} from 'class-validator';
 import {RequestHandler} from 'express';
 import { Logger } from '../../base/utils/Logger';
@@ -31,7 +31,7 @@ export function ValidationMiddleware<T>(type: any, skipMissingProperties = false
     }
 
     return (req, res, next) => {
-        validate(plainToClass(type, req.body), {skipMissingProperties})
+        validate(plainToInstance(type, req.body), {skipMissingProperties})
             .then((errors: ValidationError[]) => {
                 try {
                     if (errors.length > 0) {

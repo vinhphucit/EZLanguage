@@ -32,7 +32,7 @@ function ValidationMiddleware(type, skipMissingProperties = false) {
         return errorMessage.length > 0 ? errorMessage.join(',') : "";
     }
     return (req, res, next) => {
-        (0, class_validator_1.validate)((0, class_transformer_1.plainToClass)(type, req.body), { skipMissingProperties })
+        (0, class_validator_1.validate)((0, class_transformer_1.plainToInstance)(type, req.body), { skipMissingProperties })
             .then((errors) => {
             try {
                 if (errors.length > 0) {

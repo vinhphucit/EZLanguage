@@ -1,4 +1,5 @@
 import {IsEmail, IsOptional, IsString, Length, MaxLength} from 'class-validator';
+import { UserDomain } from '../../../../models/domain/UserDomain';
 import {IsNotEmptyString} from "../../../../utils/validation/IsNotEmptyString";
 
 export class SignUpRequest {
@@ -13,12 +14,12 @@ export class SignUpRequest {
     @IsString()
     @Length(1, 50)
     @IsNotEmptyString()
-    public firstName: string
+    firstName: string
     @IsString()
     @Length(1, 50)
     @IsNotEmptyString()
     @IsOptional()
-    public lastName: string
+    lastName: string
     @IsString()
     @Length(1, 50)
     @IsNotEmptyString()

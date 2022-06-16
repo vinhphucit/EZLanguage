@@ -11,6 +11,8 @@ import { CryptoUtils } from "../utils/auth/CryptoUtils";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { RoleService } from "./RoleService";
 import { UserStatus } from "../enums/UserStatus";
+import { UserDomain } from "../models/domain/UserDomain";
+import { SignUpRequest } from "../models/dto/request/auth/SignUpRequest";
 
 @Service()
 export class UserService {
@@ -21,8 +23,9 @@ export class UserService {
 
   public async create(user: CreateUserRequest): Promise<IUser> {
     const existingUser = await this.getByEmail(user.email);
-    if (existingUser) {      
-        throw new BadRequestException(`Email ${user.email} already existed`);      
+
+    if (existingUser) {
+      throw new BadRequestException(`Email ${user.email} already existed`);
     } else {
       return await this._createNewUser(user);
     }
@@ -104,9 +107,9 @@ export class UserService {
 
   private async _createNewUser(user: CreateUserRequest): Promise<IUser> {
     let item: Partial<IUser> = {
+      password: user.password?(await CryptoUtils.hashPassword(user.password)):undefined,
       firstName: user.firstName,
       lastName: user.lastName,
-      password: await CryptoUtils.hashPassword(user.password),
       title: user.title,
       address: user.address,
       email: user.email,
@@ -122,5 +125,4 @@ export class UserService {
 
     return this.repo.create(item);
   }
-
 }
