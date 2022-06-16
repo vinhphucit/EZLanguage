@@ -26,6 +26,7 @@ const UserRepository_1 = require("../repositories/UserRepository");
 const StringUtils_1 = require("../utils/StringUtils");
 const CryptoUtils_1 = require("../utils/auth/CryptoUtils");
 const RoleService_1 = require("./RoleService");
+const UserStatus_1 = require("../enums/UserStatus");
 let UserService = class UserService {
     constructor(repo) {
         this.repo = repo;
@@ -34,6 +35,9 @@ let UserService = class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             const existingUser = yield this.getByEmail(user.email);
             if (existingUser) {
+                if (existingUser.status === UserStatus_1.UserStatus.NOT_ACTIVE) {
+                    return existingUser;
+                }
                 throw new BadRequestException_1.BadRequestException(`Email ${user.email} already existed`);
             }
             else {
@@ -104,7 +108,9 @@ let UserService = class UserService {
     _createNewUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             let item = {
-                password: user.password ? (yield CryptoUtils_1.CryptoUtils.hashPassword(user.password)) : undefined,
+                password: user.password
+                    ? yield CryptoUtils_1.CryptoUtils.hashPassword(user.password)
+                    : undefined,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 title: user.title,

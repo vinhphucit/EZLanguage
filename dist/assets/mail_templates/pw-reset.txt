@@ -1,0 +1,12 @@
+LfK! - Password reset.
+
+A password reset for your account got requested
+If you didn't request the reset please ignore this mail
+Your password won't be changed until you click the reset link below and set a new one.
+
+Reset: {{reset_link}}
+
+
+Copyright © {{copyright_owner}}. All rights reserved.
+Imprint: {{link_imprint}} | Privacy: {{link_privacy}}
+This mail was sent to {{recipient_mail}} because someone request a password reset for a account linked to the mail address.

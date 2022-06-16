@@ -60,6 +60,14 @@ exports.env = {
         emailVerificationMaxTryCount: (0, env_1.toNumber)((0, env_1.getOsEnv)('EMAIL_VERIFICATION_MAX_TRY_COUNT')),
         resetPasswordExpiresIn: (0, env_1.toNumber)((0, env_1.getOsEnv)('RESET_PASSWORD_EXPIRES_IN')),
         resetPasswordMaxTryCount: (0, env_1.toNumber)((0, env_1.getOsEnv)('RESET_PASSWORD_MAX_TRY_COUNT')),
-    }
+    },
+    mail: {
+        mail_server: (0, env_1.getOsEnv)('MAIL_SERVER'),
+        mail_port: (0, env_1.toNumber)((0, env_1.getOsEnv)('MAIL_PORT')),
+        mail_user: (0, env_1.getOsEnv)('MAIL_USER'),
+        mail_password: (0, env_1.getOsEnv)('MAIL_PASSWORD'),
+        mail_from: (0, env_1.getOsEnv)('MAIL_FROM'),
+        app_url: (0, env_1.getOsEnv)('APP_URL'),
+    },
 };
 //# sourceMappingURL=Env.js.map

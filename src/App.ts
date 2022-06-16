@@ -17,7 +17,7 @@ import { NotFoundRouter } from "./v1/routers/NotFoundRouter";
 import { RoleRouter } from "./v1/routers/RoleRouter";
 import { PermissionRouter } from "./v1/routers/PermissionRouter";
 import { AuthRouter } from "./v1/routers/AuthRouter";
-
+import {glob} from "glob";
 export class App {
   public app: Application = express();
   public server: Server;
@@ -41,7 +41,14 @@ export class App {
     });
   }
   initializeEventDispatch() {
-    // throw new Error("Method not implemented.");
+    const patterns = env.subscriber;
+    patterns.forEach((pattern) => {
+        glob(pattern, (err: any, files: string[]) => {
+            for (const file of files) {
+                require(file);
+            }
+        });
+    });
   }
   initializeHandlingResponse() {
     this.app.use(new ResFormaterMiddleware().handleResponse);

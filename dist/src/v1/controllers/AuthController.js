@@ -46,8 +46,7 @@ let AuthController = class AuthController {
             try {
                 const rq = req.body;
                 const user = yield this.userService.create(rq);
-                const verificationCode = (0, StringUtils_1.genRandomString)(10);
-                yield this.userChoreService.updateEmailVerificationCodeByUserId(user.id, verificationCode);
+                yield this.userChoreService.updateEmailVerificationCodeByUserId(user);
                 next(new SuccessResponse_1.SuccessResponse(user));
             }
             catch (e) {
@@ -148,7 +147,7 @@ let AuthController = class AuthController {
                 if (existingUser.status !== UserStatus_1.UserStatus.ACTIVE) {
                     throw new BadRequestException_1.BadRequestException("User has not activated yet");
                 }
-                yield this.userChoreService.verifyRefreshTokenByUserId(existingUser.id, rq.token);
+                yield this.userChoreService.verifyResetPasswordCodeById(existingUser.id, rq.token);
                 yield this.userService.updatePassword(existingUser, rq.password);
                 next(new NoContentResponse_1.NoContentResponse());
             }

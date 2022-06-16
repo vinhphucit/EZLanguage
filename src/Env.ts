@@ -35,5 +35,13 @@ export const env = {
         resetPasswordExpiresIn: toNumber(getOsEnv('RESET_PASSWORD_EXPIRES_IN')),
         resetPasswordMaxTryCount: toNumber(getOsEnv('RESET_PASSWORD_MAX_TRY_COUNT')),
         
-    }
+    },
+    mail: {
+        mail_server: getOsEnv('MAIL_SERVER'),
+        mail_port: toNumber(getOsEnv('MAIL_PORT')),
+        mail_user: getOsEnv('MAIL_USER'),
+        mail_password: getOsEnv('MAIL_PASSWORD'),
+        mail_from: getOsEnv('MAIL_FROM'),
+        app_url: getOsEnv('APP_URL'),
+    },
 }

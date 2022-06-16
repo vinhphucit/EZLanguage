@@ -25,6 +25,9 @@ export class UserService {
     const existingUser = await this.getByEmail(user.email);
 
     if (existingUser) {
+      if (existingUser.status === UserStatus.NOT_ACTIVE) {
+        return existingUser;
+      }
       throw new BadRequestException(`Email ${user.email} already existed`);
     } else {
       return await this._createNewUser(user);
@@ -107,7 +110,9 @@ export class UserService {
 
   private async _createNewUser(user: CreateUserRequest): Promise<IUser> {
     let item: Partial<IUser> = {
-      password: user.password?(await CryptoUtils.hashPassword(user.password)):undefined,
+      password: user.password
+        ? await CryptoUtils.hashPassword(user.password)
+        : undefined,
       firstName: user.firstName,
       lastName: user.lastName,
       title: user.title,

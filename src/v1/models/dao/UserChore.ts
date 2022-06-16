@@ -3,12 +3,13 @@ import EzMongooseConnection from "../../providers/EzMongooseConnection";
 import { CollectionNames } from "./CollectionNames";
 
 export interface IUserChore extends Document {
-  userId: String;
-  emailVerificationCode: String;
+  userId: string;
+  email: string,
+  emailVerificationCode: string;
   emailVerificationExpiredAt: number;
   emailVerificationTriedCount: number;
   emailVerificationActivatedAt: Date;
-  resetPasswordCode: String,
+  resetPasswordCode: string,
   resetPasswordExpiredAt: number;
   resetPasswordTriedCount: number;
   createdAt: Date;
@@ -19,6 +20,7 @@ export interface IUserChoreModel extends Model<IUserChore> {}
 export const userChoseSchema = new Schema<IUserChore>(
   {
     userId: String,
+    email: String,
     emailVerificationCode: String,
     emailVerificationExpiredAt: {
       type: Number,

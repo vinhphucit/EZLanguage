@@ -9,6 +9,7 @@ const EzMongooseConnection_1 = __importDefault(require("../../providers/EzMongoo
 const CollectionNames_1 = require("./CollectionNames");
 exports.userChoseSchema = new mongoose_1.Schema({
     userId: String,
+    email: String,
     emailVerificationCode: String,
     emailVerificationExpiredAt: {
         type: Number,

@@ -27,6 +27,7 @@ const GetUsersResponse_1 = require("../models/dto/response/user/GetUsersResponse
 const GetUserByIdResponse_1 = require("../models/dto/response/user/GetUserByIdResponse");
 const NoContentResponse_1 = require("../../base/models/dto/response/success/NoContentResponse");
 const UpdateUserByIdResponse_1 = require("../models/dto/response/user/UpdateUserByIdResponse");
+const UserChoreService_1 = require("../services/UserChoreService");
 let UserController = class UserController {
     constructor(service) {
         this.service = service;
@@ -37,6 +38,7 @@ let UserController = class UserController {
                 const request = req.body;
                 request.password = undefined;
                 const result = yield this.service.create(request);
+                yield this.userChoreService.updateEmailVerificationCodeByUserId(result);
                 next(new SuccessResponse_1.SuccessResponse(new CreateUserResponse_1.CreateUserResponse(result)));
             }
             catch (e) {
@@ -49,7 +51,7 @@ let UserController = class UserController {
             try {
                 const { limit, start, sort, query } = req.query;
                 const result = yield this.service.get(limit, start, sort, query);
-                next(new SuccessResponse_1.SuccessResponse(new GetUsersResponse_1.GetUsersResponse(result.items.map(value => new GetUserByIdResponse_1.GetUserByIdResponse(value)), result.start, result.limit, result.totalItems, result.sort, result.query)));
+                next(new SuccessResponse_1.SuccessResponse(new GetUsersResponse_1.GetUsersResponse(result.items.map((value) => new GetUserByIdResponse_1.GetUserByIdResponse(value)), result.start, result.limit, result.totalItems, result.sort, result.query)));
             }
             catch (e) {
                 return next(e);
@@ -94,6 +96,10 @@ let UserController = class UserController {
         });
     }
 };
+__decorate([
+    (0, typedi_1.Inject)(),
+    __metadata("design:type", UserChoreService_1.UserChoreService)
+], UserController.prototype, "userChoreService", void 0);
 UserController = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [UserService_1.UserService])

@@ -17,6 +17,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserChoreService = void 0;
 const BadRequestException_1 = require("../../base/exceptions/BadRequestException");
@@ -25,6 +28,9 @@ const typedi_1 = require("typedi");
 const UserChoreRepository_1 = require("../repositories/UserChoreRepository");
 const DateUtils_1 = require("../utils/DateUtils");
 const Env_1 = require("../../Env");
+const event_dispatch_1 = require("event-dispatch");
+const Events_1 = __importDefault(require("../subscribers/Events"));
+const StringUtils_1 = require("../utils/StringUtils");
 let UserChoreService = class UserChoreService {
     constructor(repo) {
         this.repo = repo;
@@ -37,22 +43,27 @@ let UserChoreService = class UserChoreService {
             return result.items[0];
         });
     }
-    updateEmailVerificationCodeByUserId(userId, code) {
+    updateEmailVerificationCodeByUserId(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const entity = yield this.getByUserId(userId);
+            const entity = yield this.getByUserId(user.id);
+            let updatedUserChore;
+            const verificationCode = (0, StringUtils_1.genRandomString)(10);
             if (!entity) {
                 const item = {
-                    userId,
-                    emailVerificationCode: code,
+                    userId: user.id,
+                    email: user.email,
+                    emailVerificationCode: verificationCode,
                     emailVerificationExpiredAt: (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.emailVerificationExpiresIn),
                 };
-                return yield this.repo.create(item);
+                updatedUserChore = yield this.repo.create(item);
             }
             else {
-                entity.emailVerificationCode = code;
+                entity.emailVerificationCode = verificationCode;
                 entity.emailVerificationExpiredAt = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.emailVerificationExpiresIn);
-                return yield this.repo.updateById(entity.id, entity);
+                updatedUserChore = yield this.repo.updateById(entity.id, entity);
             }
+            new event_dispatch_1.EventDispatcher().dispatch(Events_1.default.auth.register, updatedUserChore);
+            return updatedUserChore;
         });
     }
     verifyEmailVerificationCodeByUserId(userId, code) {
@@ -91,10 +102,12 @@ let UserChoreService = class UserChoreService {
                 entity.resetPasswordCode = code;
                 entity.resetPasswordExpiredAt = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.resetPasswordExpiresIn);
             }
-            return yield this.repo.updateById(entity.id, entity);
+            const updatedUserChore = yield this.repo.updateById(entity.id, entity);
+            new event_dispatch_1.EventDispatcher().dispatch(Events_1.default.auth.resetPassword, updatedUserChore);
+            return updatedUserChore;
         });
     }
-    verifyRefreshTokenByUserId(userId, code) {
+    verifyResetPasswordCodeById(userId, code) {
         return __awaiter(this, void 0, void 0, function* () {
             const entity = yield this.getByUserId(userId);
             if (!entity)

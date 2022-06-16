@@ -5,6 +5,10 @@ import { UserChoreRepository } from "../repositories/UserChoreRepository";
 import { IUserChore } from "../models/dao/UserChore";
 import { nowAfter, timeInSecondAfter } from "../utils/DateUtils";
 import { env } from "../../Env";
+import { EventDispatcher } from "event-dispatch";
+import Events from "../subscribers/Events";
+import { IUser } from "../models/dao/User";
+import { genRandomString } from "../utils/StringUtils";
 
 @Service()
 export class UserChoreService {
@@ -22,27 +26,31 @@ export class UserChoreService {
   }
 
   async updateEmailVerificationCodeByUserId(
-    userId: string,
-    code: string
+    user: IUser
   ): Promise<IUserChore | undefined> {
-    const entity = await this.getByUserId(userId);
-    if (!entity) {
+    const entity = await this.getByUserId(user.id);
+    let updatedUserChore;
+    const verificationCode = genRandomString(10);
+    if (!entity) {      
       const item: Partial<IUserChore> = {
-        userId,
-        emailVerificationCode: code,
+        userId: user.id,
+        email: user.email,
+        emailVerificationCode: verificationCode,
         emailVerificationExpiredAt: timeInSecondAfter(
           env.auth.emailVerificationExpiresIn
         ),
       };
-      return await this.repo.create(item);
+      updatedUserChore = await this.repo.create(item);
     } else {
-      entity.emailVerificationCode = code;
+      entity.emailVerificationCode = verificationCode;
       entity.emailVerificationExpiredAt = timeInSecondAfter(
         env.auth.emailVerificationExpiresIn
       );
 
-      return await this.repo.updateById(entity.id, entity);
+      updatedUserChore = await this.repo.updateById(entity.id, entity);
     }
+    new EventDispatcher().dispatch(Events.auth.register, updatedUserChore);
+    return updatedUserChore;
   }
 
   async verifyEmailVerificationCodeByUserId(
@@ -93,9 +101,12 @@ export class UserChoreService {
       );
     }
 
-    return await this.repo.updateById(entity.id, entity);
+    const updatedUserChore = await this.repo.updateById(entity.id, entity);
+    new EventDispatcher().dispatch(Events.auth.resetPassword, updatedUserChore);
+    return updatedUserChore
   }
-  async verifyRefreshTokenByUserId(
+  
+  async verifyResetPasswordCodeById(
     userId: string,
     code: string
   ): Promise<IUserChore | undefined> {

@@ -35,9 +35,8 @@ export class AuthController {
   public async signUp(req: Request, res: Response, next: NextFunction) {
     try {
       const rq = req.body;
-      const user = await this.userService.create(rq);
-      const verificationCode = genRandomString(10);
-      await this.userChoreService.updateEmailVerificationCodeByUserId(user.id, verificationCode)
+      const user = await this.userService.create(rq);    
+      await this.userChoreService.updateEmailVerificationCodeByUserId(user);
       next(new SuccessResponse(user));
     } catch (e) {
       return next(e);
@@ -73,12 +72,12 @@ export class AuthController {
   public async refreshToken(req: Request, res: Response, next: NextFunction) {
     try {
       const rq: RefreshTokenRequest = req.body;
-      let token: JwtRefreshToken = await JwtUtils.verifyJwtToken(rq.token);      
+      let token: JwtRefreshToken = await JwtUtils.verifyJwtToken(rq.token);
 
       const foundRefreshToken = await this.refreshTokenService.getById(
         token.refreshTokenId
       );
-  
+
       if (
         !foundRefreshToken ||
         foundRefreshToken.status !== RefreshTokenStatus.ACTIVE
@@ -92,9 +91,11 @@ export class AuthController {
         throw new BadRequestException(`User is not activated`);
       }
 
-      const response = await this.authService.generateAccessToken(foundUser, token.refreshTokenId);
+      const response = await this.authService.generateAccessToken(
+        foundUser,
+        token.refreshTokenId
+      );
 
-       
       next(new SuccessResponse(response));
     } catch (e) {
       return next(e);
@@ -103,12 +104,12 @@ export class AuthController {
   public async signOut(req: Request, res: Response, next: NextFunction) {
     try {
       const rq: SignOutRequest = req.body;
-      let token: JwtRefreshToken = await JwtUtils.verifyJwtToken(rq.token);      
+      let token: JwtRefreshToken = await JwtUtils.verifyJwtToken(rq.token);
 
       const foundRefreshToken = await this.refreshTokenService.getById(
         token.refreshTokenId
       );
-  
+
       if (
         !foundRefreshToken ||
         foundRefreshToken.status !== RefreshTokenStatus.ACTIVE
@@ -117,7 +118,7 @@ export class AuthController {
       }
 
       await this.authService.revokeRefreshToken(foundRefreshToken);
-       
+
       next(new NoContentResponse());
     } catch (e) {
       return next(e);
@@ -137,7 +138,10 @@ export class AuthController {
       }
 
       const verificationCode = genRandomString(10);
-      await this.userChoreService.updateResetPasswordCodeByUserId(existingUser.id, verificationCode)
+      await this.userChoreService.updateResetPasswordCodeByUserId(
+        existingUser.id,
+        verificationCode
+      );
 
       next(new NoContentResponse());
     } catch (e) {
@@ -162,7 +166,10 @@ export class AuthController {
         throw new BadRequestException("User has not activated yet");
       }
 
-      await this.userChoreService.verifyRefreshTokenByUserId(existingUser.id, rq.token);
+      await this.userChoreService.verifyResetPasswordCodeById(
+        existingUser.id,
+        rq.token
+      );
       await this.userService.updatePassword(existingUser, rq.password);
 
       next(new NoContentResponse());
@@ -176,18 +183,20 @@ export class AuthController {
       const rq: ChangePasswordRequest = req.body;
       const userId = getRequestUserId(req);
       const existingUser = await this.userService.getById(userId);
-    
+
       if (existingUser.status !== UserStatus.ACTIVE) {
         throw new BadRequestException("User has not activated yet");
       }
 
       if (
-        !(await CryptoUtils.comparePassword(existingUser.password, rq.oldPassword))
+        !(await CryptoUtils.comparePassword(
+          existingUser.password,
+          rq.oldPassword
+        ))
       ) {
         throw new BadRequestException("Password is not correct");
       }
 
-      
       this.userService.updatePassword(existingUser, rq.newPassword);
 
       next(new NoContentResponse());
@@ -205,9 +214,15 @@ export class AuthController {
         throw new NotFoundException(`User ${rq.email} doesn't exist`);
       }
 
-      if(existingUser.status === UserStatus.NOT_ACTIVE){
-        await this.userChoreService.verifyEmailVerificationCodeByUserId(existingUser.id, rq.code);
-        await this.userService.updateStatusByUser(existingUser, UserStatus.ACTIVE);
+      if (existingUser.status === UserStatus.NOT_ACTIVE) {
+        await this.userChoreService.verifyEmailVerificationCodeByUserId(
+          existingUser.id,
+          rq.code
+        );
+        await this.userService.updateStatusByUser(
+          existingUser,
+          UserStatus.ACTIVE
+        );
       }
 
       next(new NoContentResponse());

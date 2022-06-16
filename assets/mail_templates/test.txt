@@ -1,0 +1,8 @@
+LfK! - Mail test.
+
+This is a test mail triggered by an admin in the LfK! backend.
+
+
+Copyright © {{copyright_owner}}. All rights reserved.
+Imprint: {{link_imprint}} | Privacy: {{link_privacy}}
+This mail was sent to {{recipient_mail}} because someone requested a mail test for this mail address.
