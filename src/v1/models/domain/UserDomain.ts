@@ -42,7 +42,7 @@ export class UserDomain {
     result: SignUpRequest
   ): Promise<UserDomain> {
     let self = new this();
-    self.password = await CryptoUtils.hashPassword(result.password);
+    self.password = result.password;
     self.firstName = result.firstName;
     self.lastName = result.lastName;
     self.title = result.title;

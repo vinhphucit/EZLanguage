@@ -22,12 +22,6 @@ class AuthRouter extends CommonRouterConfig_1.CommonRoutesConfig {
     }
     configureRoutes() {
         const controller = typedi_1.default.get(AuthController_1.AuthController);
-        this.router.all(``, (req, res, next) => {
-            // this middleware function runs before any request to /users/:userId
-            // but it doesn't accomplish anything just yet---
-            // it simply passes control to the next applicable function below using next()
-            next();
-        });
         this.router.post(`/signUp`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignUpRequest_1.SignUpRequest), controller.signUp.bind(controller));
         this.router.post(`/signIn`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignInRequest_1.SignInRequest), controller.signIn.bind(controller));
         this.router.post(`/signOut`, (0, ValidationMiddleware_1.ValidationMiddleware)(SignOutRequest_1.SignOutRequest), controller.signOut.bind(controller));

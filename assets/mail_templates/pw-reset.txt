@@ -1,4 +1,4 @@
-LfK! - Password reset.
+EzLang - Password reset.
 
 A password reset for your account got requested
 If you didn't request the reset please ignore this mail

@@ -24,6 +24,8 @@ import { ChangePasswordRequest } from "../models/dto/request/auth/ChangePassword
 import { getRequestUserId } from "../utils/RequestUtils";
 import { SignUpRequest } from "../models/dto/request/auth/SignUpRequest";
 import { UserDomain } from "../models/domain/UserDomain";
+import { SignUpResponse } from "../models/dto/response/auth/SignUpResponse";
+import { SignInResponse } from "../models/dto/response/auth/SignInResponse";
 
 @Service()
 export class AuthController {
@@ -41,7 +43,7 @@ export class AuthController {
         await UserDomain.fromRegisterRequest(rq)
       );
       await this.userChoreService.updateEmailVerificationCodeByUserId(user);
-      next(new SuccessResponse(user));
+      next(new SuccessResponse(new SignUpResponse(user)));
     } catch (e) {
       return next(e);
     }
@@ -66,7 +68,7 @@ export class AuthController {
         throw new BadRequestException("Password is not correct");
       }
 
-      const response = await this.authService.generateAccessToken(existingUser);
+      const response:SignInResponse = await this.authService.generateAccessToken(existingUser);
       next(new SuccessResponse(response));
     } catch (e) {
       return next(e);

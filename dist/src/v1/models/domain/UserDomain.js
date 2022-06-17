@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserDomain = void 0;
 const RoleService_1 = require("../../services/RoleService");
-const CryptoUtils_1 = require("../../utils/auth/CryptoUtils");
 const typedi_1 = __importDefault(require("typedi"));
 const RoleDomain_1 = require("./RoleDomain");
 class UserDomain {
@@ -37,7 +36,7 @@ class UserDomain {
     static fromRegisterRequest(result) {
         return __awaiter(this, void 0, void 0, function* () {
             let self = new this();
-            self.password = yield CryptoUtils_1.CryptoUtils.hashPassword(result.password);
+            self.password = result.password;
             self.firstName = result.firstName;
             self.lastName = result.lastName;
             self.title = result.title;

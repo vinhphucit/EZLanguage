@@ -35,6 +35,7 @@ const UserChoreService_1 = require("../services/UserChoreService");
 const StringUtils_1 = require("../utils/StringUtils");
 const RequestUtils_1 = require("../utils/RequestUtils");
 const UserDomain_1 = require("../models/domain/UserDomain");
+const SignUpResponse_1 = require("../models/dto/response/auth/SignUpResponse");
 let AuthController = class AuthController {
     constructor(authService, userService, userChoreService, refreshTokenService) {
         this.authService = authService;
@@ -48,7 +49,7 @@ let AuthController = class AuthController {
                 const rq = req.body;
                 const user = yield this.userService.create(yield UserDomain_1.UserDomain.fromRegisterRequest(rq));
                 yield this.userChoreService.updateEmailVerificationCodeByUserId(user);
-                next(new SuccessResponse_1.SuccessResponse(user));
+                next(new SuccessResponse_1.SuccessResponse(new SignUpResponse_1.SignUpResponse(user)));
             }
             catch (e) {
                 return next(e);

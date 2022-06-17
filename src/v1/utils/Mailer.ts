@@ -59,21 +59,10 @@ export class Mailer {
       .replace("{{copyright_owner}}", "EzLang")
       .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
       .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
-    const body_txt = fs
-      .readFileSync(
-        path.resolve(__dirname, "../../../assets/mail_templates/pw-reset.html"),
-        { encoding: "utf8" }
-      )
-      .replace("{{reset_link}}", reset_link)
-      .replace("{{recipient_mail}}", to_address)
-      .replace("{{copyright_owner}}", "LfK!")
-      .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
-      .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
 
     const mail: MailOptions = {
       to: to_address,
-      subject: "Password Reset",
-      text: body_txt,
+      subject: "Password Reset",      
       html: body_html,
     };
     await this.sendMail(mail);
@@ -107,25 +96,11 @@ export class Mailer {
       .replace("{{copyright_owner}}", "EzLearn")
       .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
       .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
-    const body_txt = fs
-      .readFileSync(
-        path.resolve(
-          __dirname,
-          "../../../assets/mail_templates/account-confirmation.html"
-        ),
-        { encoding: "utf8" }
-      )
-      .replace("{{verify_link}}", verify_link)
-      .replace("{{verify_expired_at}}", verify_expired_at)
-      .replace("{{recipient_mail}}", to_address)
-      .replace("{{copyright_owner}}", "DigiLearn")
-      .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
-      .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
+
 
     const mail: MailOptions = {
       to: to_address,
       subject: "Verify Account",
-      text: body_txt,
       html: body_html,
     };
     await this.sendMail(mail);
@@ -145,19 +120,11 @@ export class Mailer {
       .replace("{{copyright_owner}}", "LfK!")
       .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
       .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
-    const body_txt = fs
-      .readFileSync(
-        path.resolve(__dirname, "../../../assets/mail_templates/test.txt"),
-        { encoding: "utf8" }
-      )
-      .replace("{{recipient_mail}}", to_address)
-      .replace("{{copyright_owner}}", "LfK!")
-      .replace("{{link_imprint}}", `${env.mail.app_url}/imprint`)
-      .replace("{{link_privacy}}", `${env.mail.app_url}/privacy`);
+
     const mail: MailOptions = {
       to: to_address,
-      subject: "LfK! Test Mail",
-      text: body_txt,
+      subject: "EzLearn! Test Mail",
+
       html: body_html,
     };
     await this.sendMail(mail);
