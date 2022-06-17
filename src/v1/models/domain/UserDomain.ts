@@ -1,3 +1,6 @@
+import { RoleService } from "../../services/RoleService";
+import { CryptoUtils } from "../../utils/auth/CryptoUtils";
+import Container from "typedi";
 import { IUser } from "../dao/User";
 import { SignUpRequest } from "../dto/request/auth/SignUpRequest";
 import { CreateUserRequest } from "../dto/request/user/CreateUserRequest";
@@ -33,5 +36,43 @@ export class UserDomain {
     this.roles = result.roles.map((r) => new RoleDomain(r));
     this.createdAt = result.createdAt;
     this.updatedAt = result.updatedAt;
+  }
+
+  public static async fromRegisterRequest(
+    result: SignUpRequest
+  ): Promise<UserDomain> {
+    let self = new this();
+    self.password = await CryptoUtils.hashPassword(result.password);
+    self.firstName = result.firstName;
+    self.lastName = result.lastName;
+    self.title = result.title;
+    self.address = result.address;
+    self.email = result.email;
+    self.mobile = result.mobile;
+
+    const roleService = Container.get(RoleService);
+    const userRole = await roleService.getByName("User");
+    if (userRole) self.roles = [new RoleDomain(userRole)];
+    return self;
+  }
+
+  public static  fromCreateRequest(
+    result: CreateUserRequest
+  ): UserDomain {
+    let self = new this();
+    self.firstName = result.firstName;
+    self.lastName = result.lastName;
+    self.title = result.title;
+    self.address = result.address;
+    self.email = result.email;
+    self.mobile = result.mobile;
+    if (result.roles) {
+      self.roles = result.roles.map((r) => {
+        let role = new RoleDomain();
+        role.id = r.id;
+        return role;
+      });
+    }
+    return self;
   }
 }

@@ -17,31 +17,35 @@ export class UserRouter extends CommonRoutesConfig {
   configureRoutes() {
     const controller = Container.get(UserController);
 
-    this.router.all(``, AuthenticationMiddleware());
     this.router.post(
       ``,
+      AuthenticationMiddleware(),
       AuthorizationMiddleware(Permissions.User.Create),
       ValidationMiddleware(CreateUserRequest),
       controller.create.bind(controller)
     );
     this.router.get(
       ``,      
+      AuthenticationMiddleware(),
       AuthorizationMiddleware(Permissions.User.Read),
       controller.get.bind(controller)
     );
     this.router.get(
       `/:id`,      
+      AuthenticationMiddleware(),
       AuthorizationMiddleware(Permissions.User.ReadById),
       controller.getById.bind(controller)
     );
     this.router.put(
       `/:id`,    
+      AuthenticationMiddleware(),
       AuthorizationMiddleware(Permissions.User.UpdateById),
       ValidationMiddleware(UpdateUserByIdRequest),
       controller.updateById.bind(controller)
     );
     this.router.delete(
       `/:id`,      
+      AuthenticationMiddleware(),
       AuthorizationMiddleware(Permissions.User.DeleteById),
       controller.deleteById.bind(controller)
     );

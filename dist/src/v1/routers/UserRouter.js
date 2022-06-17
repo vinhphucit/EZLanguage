@@ -19,12 +19,11 @@ class UserRouter extends CommonRouterConfig_1.CommonRoutesConfig {
     }
     configureRoutes() {
         const controller = typedi_1.default.get(UserController_1.UserController);
-        this.router.all(``, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)());
-        this.router.post(``, (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.Create), (0, ValidationMiddleware_1.ValidationMiddleware)(CreateUserRequest_1.CreateUserRequest), controller.create.bind(controller));
-        this.router.get(``, (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.Read), controller.get.bind(controller));
-        this.router.get(`/:id`, (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.ReadById), controller.getById.bind(controller));
-        this.router.put(`/:id`, (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.UpdateById), (0, ValidationMiddleware_1.ValidationMiddleware)(UpdateUserByIdRequest_1.UpdateUserByIdRequest), controller.updateById.bind(controller));
-        this.router.delete(`/:id`, (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.DeleteById), controller.deleteById.bind(controller));
+        this.router.post(``, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)(), (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.Create), (0, ValidationMiddleware_1.ValidationMiddleware)(CreateUserRequest_1.CreateUserRequest), controller.create.bind(controller));
+        this.router.get(``, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)(), (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.Read), controller.get.bind(controller));
+        this.router.get(`/:id`, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)(), (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.ReadById), controller.getById.bind(controller));
+        this.router.put(`/:id`, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)(), (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.UpdateById), (0, ValidationMiddleware_1.ValidationMiddleware)(UpdateUserByIdRequest_1.UpdateUserByIdRequest), controller.updateById.bind(controller));
+        this.router.delete(`/:id`, (0, AuthenticationMiddleware_1.AuthenticationMiddleware)(), (0, AuthorizationMiddleware_1.AuthorizationMiddleware)(Permissions_1.Permissions.User.DeleteById), controller.deleteById.bind(controller));
     }
 }
 exports.UserRouter = UserRouter;

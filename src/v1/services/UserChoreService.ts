@@ -31,7 +31,7 @@ export class UserChoreService {
     const entity = await this.getByUserId(user.id);
     let updatedUserChore;
     const verificationCode = genRandomString(10);
-    if (!entity) {      
+    if (!entity) {
       const item: Partial<IUserChore> = {
         userId: user.id,
         email: user.email,
@@ -42,11 +42,12 @@ export class UserChoreService {
       };
       updatedUserChore = await this.repo.create(item);
     } else {
-      entity.emailVerificationCode = verificationCode;
-      entity.emailVerificationExpiredAt = timeInSecondAfter(
-        env.auth.emailVerificationExpiresIn
-      );
-
+      if (!entity.emailVerificationCode || nowAfter(entity.emailVerificationExpiredAt)) {
+        entity.emailVerificationCode = verificationCode;
+        entity.emailVerificationExpiredAt = timeInSecondAfter(
+          env.auth.emailVerificationExpiresIn
+        );
+      }
       updatedUserChore = await this.repo.updateById(entity.id, entity);
     }
     new EventDispatcher().dispatch(Events.auth.register, updatedUserChore);
@@ -103,9 +104,9 @@ export class UserChoreService {
 
     const updatedUserChore = await this.repo.updateById(entity.id, entity);
     new EventDispatcher().dispatch(Events.auth.resetPassword, updatedUserChore);
-    return updatedUserChore
+    return updatedUserChore;
   }
-  
+
   async verifyResetPasswordCodeById(
     userId: string,
     code: string

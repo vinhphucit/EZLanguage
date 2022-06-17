@@ -14,15 +14,11 @@ export class CreateUserRequest {
   @IsEmail()
   @Length(1, 100)
   @IsNotEmptyString()
-  email: string;
-  @IsString()
-  @Length(1, 50)
-  @IsNotEmptyString()
+  email: string;  
   @IsString()
   @Length(1, 100)
   @IsNotEmptyString()
   @IsOptional()
-  password: string;
   public firstName: string;
   @IsString()
   @Length(1, 50)

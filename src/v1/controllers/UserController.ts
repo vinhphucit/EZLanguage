@@ -10,6 +10,7 @@ import { NoContentResponse } from "../../base/models/dto/response/success/NoCont
 import { UpdateUserByIdResponse } from "../models/dto/response/user/UpdateUserByIdResponse";
 import { UpdateUserByIdRequest } from "../models/dto/request/user/UpdateUserByIdRequest";
 import { UserChoreService } from "../services/UserChoreService";
+import { UserDomain } from "../models/domain/UserDomain";
 @Service()
 export class UserController {
   @Inject()
@@ -18,9 +19,10 @@ export class UserController {
 
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const request = req.body;
-      request.password = undefined;
-      const result = await this.service.create(request);
+      const request: CreateUserRequest = req.body;
+      const result = await this.service.create(
+        UserDomain.fromCreateRequest(request)
+      );
       await this.userChoreService.updateEmailVerificationCodeByUserId(result);
       next(new SuccessResponse(new CreateUserResponse(result)));
     } catch (e) {

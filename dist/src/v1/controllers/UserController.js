@@ -28,6 +28,7 @@ const GetUserByIdResponse_1 = require("../models/dto/response/user/GetUserByIdRe
 const NoContentResponse_1 = require("../../base/models/dto/response/success/NoContentResponse");
 const UpdateUserByIdResponse_1 = require("../models/dto/response/user/UpdateUserByIdResponse");
 const UserChoreService_1 = require("../services/UserChoreService");
+const UserDomain_1 = require("../models/domain/UserDomain");
 let UserController = class UserController {
     constructor(service) {
         this.service = service;
@@ -36,8 +37,7 @@ let UserController = class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = req.body;
-                request.password = undefined;
-                const result = yield this.service.create(request);
+                const result = yield this.service.create(UserDomain_1.UserDomain.fromCreateRequest(request));
                 yield this.userChoreService.updateEmailVerificationCodeByUserId(result);
                 next(new SuccessResponse_1.SuccessResponse(new CreateUserResponse_1.CreateUserResponse(result)));
             }

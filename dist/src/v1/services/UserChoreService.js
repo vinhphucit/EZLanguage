@@ -58,8 +58,10 @@ let UserChoreService = class UserChoreService {
                 updatedUserChore = yield this.repo.create(item);
             }
             else {
-                entity.emailVerificationCode = verificationCode;
-                entity.emailVerificationExpiredAt = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.emailVerificationExpiresIn);
+                if (!entity.emailVerificationCode || (0, DateUtils_1.nowAfter)(entity.emailVerificationExpiredAt)) {
+                    entity.emailVerificationCode = verificationCode;
+                    entity.emailVerificationExpiredAt = (0, DateUtils_1.timeInSecondAfter)(Env_1.env.auth.emailVerificationExpiresIn);
+                }
                 updatedUserChore = yield this.repo.updateById(entity.id, entity);
             }
             new event_dispatch_1.EventDispatcher().dispatch(Events_1.default.auth.register, updatedUserChore);

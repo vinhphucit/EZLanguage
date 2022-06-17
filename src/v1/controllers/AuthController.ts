@@ -22,6 +22,8 @@ import { UserChoreService } from "../services/UserChoreService";
 import { genRandomString } from "../utils/StringUtils";
 import { ChangePasswordRequest } from "../models/dto/request/auth/ChangePasswordRequest";
 import { getRequestUserId } from "../utils/RequestUtils";
+import { SignUpRequest } from "../models/dto/request/auth/SignUpRequest";
+import { UserDomain } from "../models/domain/UserDomain";
 
 @Service()
 export class AuthController {
@@ -34,8 +36,10 @@ export class AuthController {
 
   public async signUp(req: Request, res: Response, next: NextFunction) {
     try {
-      const rq = req.body;
-      const user = await this.userService.create(rq);    
+      const rq: SignUpRequest = req.body;
+      const user = await this.userService.create(
+        await UserDomain.fromRegisterRequest(rq)
+      );
       await this.userChoreService.updateEmailVerificationCodeByUserId(user);
       next(new SuccessResponse(user));
     } catch (e) {

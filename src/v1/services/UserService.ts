@@ -21,7 +21,7 @@ export class UserService {
 
   constructor(private readonly repo: UserRepository) {}
 
-  public async create(user: CreateUserRequest): Promise<IUser> {
+  public async create(user: UserDomain): Promise<IUser> {
     const existingUser = await this.getByEmail(user.email);
 
     if (existingUser) {
@@ -108,7 +108,7 @@ export class UserService {
     return this.repo.removeById(id);
   }
 
-  private async _createNewUser(user: CreateUserRequest): Promise<IUser> {
+  private async _createNewUser(user: UserDomain): Promise<IUser> {
     let item: Partial<IUser> = {
       password: user.password
         ? await CryptoUtils.hashPassword(user.password)
