@@ -60,7 +60,7 @@ export class Seeder {
           case "r":
             name = "ROLE";
             break;
-          case "up":
+          case "p":
             name = "PERMISSION";
             break;
           case "ca":

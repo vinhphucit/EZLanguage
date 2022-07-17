@@ -2,7 +2,6 @@ import moment from "moment";
 import { Logger } from "../../base/utils/Logger";
 import { DATETIME_FORMAT_NO_TZ } from "./StringUtils";
 
-
 export class QueryParsingUtils {
   static LIMIT: number = 100;
 
@@ -68,131 +67,145 @@ export class QueryParsingUtils {
     if (!pQueryString) {
       return {};
     }
-    let queryString = "";
+
+    let orQueryString = [];
+
     if (Array.isArray(pQueryString)) {
-      queryString = pQueryString.join(",");
+      // queryString = pQueryString.join(",");
+      orQueryString = pQueryString;
     } else {
-      queryString = pQueryString;
+      // queryString = pQueryString;
+      orQueryString = [pQueryString];
     }
 
     try {
-      let queries = queryString.split(",");
-      let mongoQuery: any = {};
+      const orMongoQuery: any[] = [];
+      for (const queryString of orQueryString) {
+        let queries = queryString.split(",");
+        let mongoQuery: any = {};
 
-      for (let iQuery of queries) {
-        let iQueryParts = iQuery.split("%");
-        if (iQueryParts.length != 3) {
-          continue;
-        }
-
-        //field
-        let iQueryField = iQueryParts[0];
-        if (!iQueryField) {
-          continue;
-        }
-        iQueryField = iQueryField.trim();
-        if (iQueryField.length <= 0) {
-          continue;
-        }
-        iQueryField = this.standardizefield(iQueryField);
-        
-        if (allowFields) {
-          if (allowFields.includes(iQueryField)) {
-            Logger.info(`Field ${iQueryField} is not allow in query`);
+        for (let iQuery of queries) {
+          let iQueryParts = iQuery.split("%");
+          if (iQueryParts.length != 3) {
             continue;
           }
-        }
-        //operator
-        let iQueryOperator = iQueryParts[1];
-        if (!iQueryOperator) {
-          continue;
-        }
 
-        //actual comparations
-        let iQueryValue = iQueryParts[2];
-        //only accept string or number
-        if (
-          typeof iQueryValue !== "string" &&
-          typeof iQueryValue !== "number"
-        ) {
-          continue;
-        }
+          //field
+          let iQueryField = iQueryParts[0];
+          if (!iQueryField) {
+            continue;
+          }
+          iQueryField = iQueryField.trim();
+          if (iQueryField.length <= 0) {
+            continue;
+          }
+          iQueryField = this.standardizefield(iQueryField);
 
-        if (iQueryOperator === "like") {
-          let iRegex = new RegExp(iQueryValue, "i");
-
-          mongoQuery[iQueryField] = {
-            $regex: iRegex,
-          };
-        } else if (iQueryOperator === "in") {
-          let iInItems = iQueryValue.split("|");
-
-          mongoQuery[iQueryField] = {
-            $in: iInItems,
-          };
-        } else if (iQueryOperator === "nin") {
-          let iInItems = iQueryValue.split("|");
-
-          mongoQuery[iQueryField] = {
-            $nin: iInItems,
-          };
-        } else if (iQueryOperator === "gt") {
-          mongoQuery[iQueryField] = {
-            $gt: iQueryValue,
-          };
-        } else if (iQueryOperator === "gte") {
-          mongoQuery[iQueryField] = {
-            $gte: iQueryValue,
-          };
-        } else if (iQueryOperator === "lt") {
-          mongoQuery[iQueryField] = {
-            $lt: iQueryValue,
-          };
-        } else if (iQueryOperator === "lte") {
-          mongoQuery[iQueryField] = {
-            $lte: iQueryValue,
-          };
-        } else if (iQueryOperator === "ne") {
-          mongoQuery[iQueryField] = {
-            $ne: iQueryValue,
-          };
-        } else if (iQueryOperator === "eq") {
-          mongoQuery[iQueryField] = iQueryValue;
-        } else if (
-          iQueryOperator === "gtd" ||
-          iQueryOperator === "gted" ||
-          iQueryOperator === "ltd" ||
-          iQueryOperator === "lted"
-        ) {
-          let iQueryValueMoment = moment(iQueryValue, DATETIME_FORMAT_NO_TZ);
-          let iQueryValueDate = iQueryValueMoment
-            ? iQueryValueMoment.toDate()
-            : null;
-
-          if (iQueryValueDate) {
-            let iOperator = null;
-            if (iQueryOperator === "gtd") {
-              iOperator = "$gt";
-            } else if (iQueryOperator === "gted") {
-              iOperator = "$gte";
-            } else if (iQueryOperator === "ltd") {
-              iOperator = "$lt";
-            } else if (iQueryOperator === "lted") {
-              iOperator = "$lte";
+          if (allowFields) {
+            if (allowFields.includes(iQueryField)) {
+              Logger.info(`Field ${iQueryField} is not allow in query`);
+              continue;
             }
-            if (!mongoQuery[iQueryField]) {
-              mongoQuery[iQueryField] = {};
-            }
+          }
+          //operator
+          let iQueryOperator = iQueryParts[1];
+          if (!iQueryOperator) {
+            continue;
+          }
 
-            mongoQuery[iQueryField][iOperator] = iQueryValueDate;
+          //actual comparations
+          let iQueryValue = iQueryParts[2];
+          //only accept string or number
+          if (
+            typeof iQueryValue !== "string" &&
+            typeof iQueryValue !== "number"
+          ) {
+            continue;
+          }
+
+          if (iQueryOperator === "like") {
+            let iRegex = new RegExp(iQueryValue, "i");
+
+            mongoQuery[iQueryField] = {
+              $regex: iRegex,
+            };
+          } else if (iQueryOperator === "in") {
+            let iInItems = iQueryValue.split("|");
+
+            mongoQuery[iQueryField] = {
+              $in: iInItems,
+            };
+          } else if (iQueryOperator === "nin") {
+            let iInItems = iQueryValue.split("|");
+
+            mongoQuery[iQueryField] = {
+              $nin: iInItems,
+            };
+          } else if (iQueryOperator === "gt") {
+            mongoQuery[iQueryField] = {
+              $gt: iQueryValue,
+            };
+          } else if (iQueryOperator === "gte") {
+            mongoQuery[iQueryField] = {
+              $gte: iQueryValue,
+            };
+          } else if (iQueryOperator === "lt") {
+            mongoQuery[iQueryField] = {
+              $lt: iQueryValue,
+            };
+          } else if (iQueryOperator === "lte") {
+            mongoQuery[iQueryField] = {
+              $lte: iQueryValue,
+            };
+          } else if (iQueryOperator === "ne") {
+            mongoQuery[iQueryField] = {
+              $ne: iQueryValue,
+            };
+          } else if (iQueryOperator === "eq") {
+            mongoQuery[iQueryField] = iQueryValue;
+          } else if (
+            iQueryOperator === "gtd" ||
+            iQueryOperator === "gted" ||
+            iQueryOperator === "ltd" ||
+            iQueryOperator === "lted"
+          ) {
+            let iQueryValueMoment = moment(iQueryValue, DATETIME_FORMAT_NO_TZ);
+            let iQueryValueDate = iQueryValueMoment
+              ? iQueryValueMoment.toDate()
+              : null;
+
+            if (iQueryValueDate) {
+              let iOperator = null;
+              if (iQueryOperator === "gtd") {
+                iOperator = "$gt";
+              } else if (iQueryOperator === "gted") {
+                iOperator = "$gte";
+              } else if (iQueryOperator === "ltd") {
+                iOperator = "$lt";
+              } else if (iQueryOperator === "lted") {
+                iOperator = "$lte";
+              }
+              if (!mongoQuery[iQueryField]) {
+                mongoQuery[iQueryField] = {};
+              }
+
+              mongoQuery[iQueryField][iOperator] = iQueryValueDate;
+            }
           }
         }
+        orMongoQuery.push(mongoQuery);
       }
-
-      return mongoQuery;
+      if (orMongoQuery.length == 0) {
+        return {};
+      } else if (orMongoQuery.length == 1) {
+        return orMongoQuery[0];
+      } else {
+        var finalOrQuery: any = {};
+        finalOrQuery["$or"] = orMongoQuery;
+      }
     } catch (unexpectedErr) {
       Logger.info(
-        `Can't parse query ${queryString}, error detail: ${unexpectedErr}`
+        `Can't parse query ${pQueryString}, error detail: ${unexpectedErr}`
       );
       return {};
     }
