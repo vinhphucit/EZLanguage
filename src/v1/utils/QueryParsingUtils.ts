@@ -201,7 +201,8 @@ export class QueryParsingUtils {
         return orMongoQuery[0];
       } else {
         var finalOrQuery: any = {};
-        finalOrQuery["$or"] = orMongoQuery;
+        return finalOrQuery["$or"] = orMongoQuery;
+        
       }
     } catch (unexpectedErr) {
       Logger.info(

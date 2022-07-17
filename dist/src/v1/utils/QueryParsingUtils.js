@@ -189,7 +189,7 @@ class QueryParsingUtils {
             }
             else {
                 var finalOrQuery = {};
-                finalOrQuery["$or"] = orMongoQuery;
+                return finalOrQuery["$or"] = orMongoQuery;
             }
         }
         catch (unexpectedErr) {
